@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alhussein Azzam — Security Researcher</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ── NAVIGATION ── -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a class="logo" href="#hero"><span class="accent">&gt;</span> alhussein@sec<span class="blink">_</span></a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#thm-stats">TryHackMe</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#writeups">Writeups</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#certs">Certs</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="burger" aria-label="menu" onclick="toggleMenu()">☰</button>
+    </div>
+    <ul class="mobile-menu" id="mobileMenu">
+      <li><a href="#about" onclick="toggleMenu()">About</a></li>
+      <li><a href="#thm-stats" onclick="toggleMenu()">TryHackMe</a></li>
+      <li><a href="#skills" onclick="toggleMenu()">Skills</a></li>
+      <li><a href="#writeups" onclick="toggleMenu()">Writeups</a></li>
+      <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
+      <li><a href="#certs" onclick="toggleMenu()">Certs</a></li>
+      <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <canvas id="matrix"></canvas>
+    <div class="hero-content">
+      <p class="hero-pre">Hello, World. I'm</p>
+      <h1 class="hero-name">Alhussein Azzam</h1>
+      <div class="typewriter-wrapper">
+        <span class="hero-role" id="typewriter"></span><span class="cursor">|</span>
+      </div>
+      <p class="hero-sub">
+        Penetration tester, security researcher &amp; CTF player.<br />
+        I break things to understand how to build them better.
+      </p>
+      <div class="hero-btns">
+        <a class="btn btn-primary" href="#writeups">View Writeups</a>
+        <a class="btn btn-outline" href="#contact">Get in Touch</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">THM Certificates</span></div>
+        <div class="stat"><span class="stat-num" data-target="7">0</span><span class="stat-label">CTF Events</span></div>
+        <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">Projects</span></div>
+      </div>
+    </div>
+    <div class="scroll-hint">scroll down ↓</div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> whoami</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I'm a <strong>penetration tester and security researcher</strong> with a passion for offensive security.
+            I focus on web application and network penetration testing.
+          </p>
+          <p>
+            I compete in CTF events on HackTheBox and work through hands-on learning paths on TryHackMe.
+            Currently pursuing the CPTS certification on HackTheBox Academy.
+          </p>
+          <p>
+            Currently working at <a href="https://kertos.io" target="_blank" rel="noopener" class="accent-link">Kertos</a>,
+            bridging the gap between security and compliance engineering.
+          </p>
+          <div class="about-meta">
+            <span><span class="accent">▶</span> Location: Remote / Global</span>
+            <span><span class="accent">▶</span> Email: husseinalazzam7@gmail.com</span>
+            <span><span class="accent">▶</span> Status: <span class="status-dot"></span> Available for engagements</span>
+          </div>
+        </div>
+        <div class="terminal-card">
+          <div class="terminal-bar"><span></span><span></span><span></span></div>
+          <pre class="terminal-body"><code><span class="t-prompt">$ </span><span class="t-cmd">cat about.txt</span>
+
+<span class="t-key">Name</span>     : Alhussein Azzam
+<span class="t-key">Role</span>     : Penetration Tester
+<span class="t-key">Focus</span>    : Web | Network | AD
+<span class="t-key">Platform</span> : HackTheBox, TryHackMe
+<span class="t-key">Languages</span>: Python, Bash
+<span class="t-key">OS</span>       : Kali Linux, macOS
+
+<span class="t-prompt">$ </span><span class="t-cmd">cat interests.txt</span>
+
+<span class="t-key">CTF</span>      : ✓ Active player
+<span class="t-key">Bug Bounty</span>: ✓ HackerOne / Bugcrowd
+<span class="t-key">Research</span> : ✓ Ongoing
+<span class="t-key">Coffee</span>   : ✓ Always
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TRYHACKME STATS ── -->
+  <section id="thm-stats" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> tryhackme stats</h2>
+      <div class="thm-wrapper">
+
+        <!-- Badge image (always visible) -->
+        <div class="thm-badge-wrap">
+          <a href="https://tryhackme.com/p/Alhussein76" target="_blank" rel="noopener">
+            <img
+              id="thmBadge"
+              src="https://tryhackme-badges.s3.amazonaws.com/Alhussein76.png"
+              alt="TryHackMe profile — Alhussein76"
+              class="thm-badge-img"
+            />
+          </a>
+          <a class="thm-profile-link" href="https://tryhackme.com/p/Alhussein76" target="_blank" rel="noopener">
+            View Full Profile ↗
+          </a>
+        </div>
+
+        <!-- Live stats panel -->
+        <div class="thm-stats-panel">
+          <div class="thm-loading" id="thmLoading">
+            <span class="thm-spinner"></span> Fetching live stats…
+          </div>
+          <div class="thm-error hidden" id="thmError"></div>
+
+          <div class="thm-stat-grid hidden" id="thmGrid">
+            <div class="thm-stat-card">
+              <span class="thm-stat-icon">🏆</span>
+              <span class="thm-stat-val" id="thmRank">—</span>
+              <span class="thm-stat-label">Global Rank</span>
+            </div>
+            <div class="thm-stat-card">
+              <span class="thm-stat-icon">⭐</span>
+              <span class="thm-stat-val" id="thmPoints">—</span>
+              <span class="thm-stat-label">Points</span>
+            </div>
+            <div class="thm-stat-card">
+              <span class="thm-stat-icon">🔓</span>
+              <span class="thm-stat-val" id="thmRooms">—</span>
+              <span class="thm-stat-label">Rooms Completed</span>
+            </div>
+            <div class="thm-stat-card">
+              <span class="thm-stat-icon">🔥</span>
+              <span class="thm-stat-val" id="thmStreak">—</span>
+              <span class="thm-stat-label">Day Streak</span>
+            </div>
+            <div class="thm-stat-card">
+              <span class="thm-stat-icon">🎖️</span>
+              <span class="thm-stat-val" id="thmBadges">—</span>
+              <span class="thm-stat-label">Badges Earned</span>
+            </div>
+          </div>
+
+          <!-- Badge icons row -->
+          <div class="thm-badge-icons hidden" id="thmBadgeIcons"></div>
+        </div>
+
+      </div>
+
+      <!-- Completed Rooms Grid -->
+      <h3 class="thm-rooms-title"><span class="accent">▶</span> Completed Rooms</h3>
+      <div class="thm-rooms-grid">
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/adventofcyber2024" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Advent of Cyber</span></div>
+          <h4>Advent of Cyber 2024</h4>
+          <p>25-day challenge covering web, network, forensics, OSINT, and malware analysis fundamentals.</p>
+          <div class="card-tags"><span>#WebSec</span><span>#Forensics</span><span>#OSINT</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/introtoresearch" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Fundamentals</span></div>
+          <h4>Introduction to Research</h4>
+          <p>Learning the methodology and mindset for security research, vulnerability discovery, and CVE hunting.</p>
+          <div class="card-tags"><span>#Research</span><span>#Methodology</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/pythonbasics" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Scripting</span></div>
+          <h4>Python Basics</h4>
+          <p>Python fundamentals for security scripting — writing port scanners, brute-force tools, and exploit helpers.</p>
+          <div class="card-tags"><span>#Python</span><span>#Scripting</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/networkservices" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Network</span></div>
+          <h4>Network Services</h4>
+          <p>Enumeration and exploitation of common network services: SMB, Telnet, FTP, and NFS.</p>
+          <div class="card-tags"><span>#SMB</span><span>#FTP</span><span>#Enumeration</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/attacktivedirectory" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Active Directory</span></div>
+          <h4>Attacktive Directory</h4>
+          <p>Full AD attack chain: AS-REP Roasting, Kerberoasting, Pass-the-Hash to Domain Admin.</p>
+          <div class="card-tags"><span>#ActiveDirectory</span><span>#Kerberos</span><span>#PrivEsc</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/owasptop10" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Web</span></div>
+          <h4>OWASP Top 10 — 2021</h4>
+          <p>Hands-on exploitation of all OWASP Top 10 vulnerabilities including SQLi, XXE, IDOR, and SSRF.</p>
+          <div class="card-tags"><span>#OWASP</span><span>#WebSec</span><span>#SQLi</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/picklerick" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">CTF</span></div>
+          <h4>Pickle Rick</h4>
+          <p>Web app CTF requiring command injection, directory traversal, and privilege escalation to root.</p>
+          <div class="card-tags"><span>#WebSec</span><span>#CommandInjection</span><span>#PrivEsc</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/blue" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Windows</span></div>
+          <h4>Blue</h4>
+          <p>Exploiting EternalBlue (MS17-010) on a Windows 7 target with Metasploit, dumping hashes with Mimikatz.</p>
+          <div class="card-tags"><span>#EternalBlue</span><span>#Windows</span><span>#Metasploit</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/mrrobot" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">CTF</span></div>
+          <h4>Mr Robot CTF</h4>
+          <p>WordPress exploitation, password cracking, and SUID abuse to obtain 3 hidden keys as root.</p>
+          <div class="card-tags"><span>#WordPress</span><span>#SUID</span><span>#PasswordCracking</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/nmap" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Recon</span></div>
+          <h4>Nmap</h4>
+          <p>Deep dive into Nmap scan types, NSE scripting, OS fingerprinting, and firewall evasion techniques.</p>
+          <div class="card-tags"><span>#Nmap</span><span>#Recon</span><span>#PortScanning</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/linuxprivesc" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Linux</span></div>
+          <h4>Linux Privilege Escalation</h4>
+          <p>Comprehensive Linux privesc: SUID/GUID, sudo misconfig, cron jobs, writable paths, and kernel exploits.</p>
+          <div class="card-tags"><span>#Linux</span><span>#PrivEsc</span><span>#SUID</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/windowsprivesc20" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Windows</span></div>
+          <h4>Windows Privilege Escalation</h4>
+          <p>Windows privesc techniques: unquoted service paths, AlwaysInstallElevated, token impersonation, registry exploits.</p>
+          <div class="card-tags"><span>#Windows</span><span>#PrivEsc</span><span>#Tokens</span></div>
+        </a>
+
+      </div>
+      <p class="thm-rooms-note">⚠ Update these cards with your actual completed rooms — share your list and I'll replace them.</p>
+
+    </div>
+  </section>
+
+  <!-- ── SKILLS ── -->
+  <section id="skills" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> skills &amp; tools</h2>
+      <div class="skills-grid">
+
+        <div class="skill-card">
+          <div class="skill-icon">🌐</div>
+          <h3>Web App Testing</h3>
+          <ul>
+            <li>OWASP Top 10</li><li>Burp Suite Pro</li><li>SQLi / XSS / SSRF</li>
+            <li>API Security</li><li>OAuth / JWT Attacks</li>
+          </ul>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon">🖥️</div>
+          <h3>Network Pentesting</h3>
+          <ul>
+            <li>Nmap / Masscan</li><li>Metasploit</li><li>Wireshark / tcpdump</li>
+            <li>Pivoting &amp; Tunneling</li><li>Service Exploitation</li>
+          </ul>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon">🏰</div>
+          <h3>Active Directory</h3>
+          <ul>
+            <li>BloodHound / SharpHound</li><li>Kerberoasting / AS-REP</li><li>Pass-the-Hash / -Ticket</li>
+            <li>DCSync / DCSHADOW</li><li>Domain Privilege Escalation</li>
+          </ul>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon">⚙️</div>
+          <h3>Tools &amp; Scripting</h3>
+          <ul>
+            <li>Python (custom exploits)</li><li>Bash automation</li><li>Impacket suite</li>
+            <li>CrackMapExec / Evil-WinRM</li><li>Gobuster / ffuf</li>
+          </ul>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon">🔍</div>
+          <h3>OSINT &amp; Recon</h3>
+          <ul>
+            <li>Shodan / Censys</li><li>theHarvester</li><li>Maltego</li>
+            <li>Google Dorking</li><li>Subdomain Enumeration</li>
+          </ul>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon">📱</div>
+          <h3>Mobile &amp; Cloud</h3>
+          <ul>
+            <li>Android APK Analysis</li><li>AWS Misconfiguration</li><li>S3 Bucket Hunting</li>
+            <li>IAM Privilege Escalation</li><li>Container Escapes</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WRITEUPS ── -->
+  <section id="writeups" class="section">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> writeups</h2>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="htb">HackTheBox</button>
+        <button class="filter-btn" data-filter="thm">TryHackMe</button>
+        <button class="filter-btn" data-filter="ctf">CTF</button>
+        <button class="filter-btn" data-filter="real">Real World</button>
+      </div>
+      <div class="cards-grid" id="writeupsGrid">
+        <!-- rendered by WRITEUPS array in app.js -->
+      </div>
+      <p class="writeups-empty hidden" id="writeupsEmpty">
+        <span class="accent">▶</span> No writeups published yet — add your first one to the <code>WRITEUPS</code> array in <code>app.js</code>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> projects</h2>
+      <div class="projects-grid">
+
+        <!-- GoPhish -->
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-icon">🎣</span>
+            <div class="project-links">
+              <a href="https://github.com/gophish/gophish" title="GoPhish Framework" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.382 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 013.003-.404c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.807 5.624-5.479 5.922.43.372.823 1.102.823 2.222v3.293c0 .322.218.694.825.576C20.565 21.796 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3>GoPhish Phishing Campaign</h3>
+          <p>
+            Deployed and operated a full phishing simulation using the GoPhish framework. Built convincing
+            landing pages cloning real login portals, configured SMTP relay with custom domains, tracked
+            click-through and credential submission rates, and produced detailed campaign reports to raise
+            security awareness.
+          </p>
+          <div class="project-stack"><span>GoPhish</span><span>SMTP</span><span>Social Engineering</span><span>HTML/CSS</span></div>
+        </div>
+
+        <!-- Cowrie SSH Honeypot -->
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-icon">🍯</span>
+            <div class="project-links">
+              <a href="https://github.com/cowrie/cowrie" title="Cowrie on GitHub" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.382 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 013.003-.404c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.807 5.624-5.479 5.922.43.372.823 1.102.823 2.222v3.293c0 .322.218.694.825.576C20.565 21.796 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3>Cowrie SSH Honeypot</h3>
+          <p>
+            Set up and ran Cowrie, a medium-to-high interaction SSH and Telnet honeypot, on a cloud VPS exposed
+            to the internet. Captured attacker TTPs including brute-force credential lists, post-exploitation
+            commands, and malware drop attempts. Analysed session logs to extract IOCs and attacker patterns.
+          </p>
+          <div class="project-stack"><span>Cowrie</span><span>Python</span><span>Linux</span><span>Threat Intel</span><span>Log Analysis</span></div>
+        </div>
+
+        <!-- T-Pot Honeypot -->
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-icon">🌐</span>
+            <div class="project-links">
+              <a href="https://github.com/telekom-security/tpotce" title="T-Pot on GitHub" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.382 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 013.003-.404c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.807 5.624-5.479 5.922.43.372.823 1.102.823 2.222v3.293c0 .322.218.694.825.576C20.565 21.796 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+            </div>
+          </div>
+          <h3>T-Pot Multi-Honeypot Platform</h3>
+          <p>
+            Deployed T-Pot (Deutsche Telekom's all-in-one honeypot platform) combining 20+ honeypots including
+            Dionaea, Conpot, HEDGEHog, and Suricata IDS. Used the built-in Kibana/ELK stack to visualise
+            real-time global attack maps, identify top attacking IPs, and analyse exploit payloads targeting
+            HTTP, SMB, and industrial protocols.
+          </p>
+          <div class="project-stack"><span>T-Pot</span><span>Docker</span><span>ELK Stack</span><span>Kibana</span><span>Suricata</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CERTIFICATIONS ── -->
+  <section id="certs" class="section">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> certifications &amp; achievements</h2>
+      <div class="certs-grid">
+
+        <div class="cert-card cert-card-inprogress">
+          <div class="cert-badge cert-badge-inprogress">THM</div>
+          <div class="cert-info">
+            <h3>Jr Penetration Tester</h3>
+            <p>TryHackMe Learning Path</p>
+            <span class="cert-year cert-inprogress">In Progress ⚡</span>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-badge">THM</div>
+          <div class="cert-info">
+            <h3>Web Fundamentals</h3>
+            <p>TryHackMe Learning Path</p>
+            <span class="cert-year">May 2025 ✓</span>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-badge">THM</div>
+          <div class="cert-info">
+            <h3>Pre Security</h3>
+            <p>TryHackMe Learning Path</p>
+            <span class="cert-year">May 2025 ✓</span>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <div class="cert-badge">THM</div>
+          <div class="cert-info">
+            <h3>Advent of Cyber 2024</h3>
+            <p>TryHackMe</p>
+            <span class="cert-year">Dec 2024 ✓</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-inprogress">
+          <div class="cert-badge cert-badge-inprogress">THM</div>
+          <div class="cert-info">
+            <h3>AI Security</h3>
+            <p>TryHackMe Learning Path</p>
+            <span class="cert-year cert-inprogress">In Progress ⚡</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-inprogress">
+          <div class="cert-badge cert-badge-inprogress">CPTS</div>
+          <div class="cert-info">
+            <h3>Certified Penetration Testing Specialist</h3>
+            <p>HackTheBox Academy</p>
+            <span class="cert-year cert-inprogress">In Progress ⚡</span>
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="thm-rooms-title" style="margin-top:48px"><span class="accent">▶</span> CTF Events</h3>
+      <div class="certs-grid">
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">HTB</div>
+          <div class="cert-info">
+            <h3>University CTF 2025: Tinsel Trouble</h3>
+            <p>HackTheBox CTF</p>
+            <span class="cert-year cert-year-ctf">Dec 2025</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">HTB</div>
+          <div class="cert-info">
+            <h3>University CTF 2024: Binary Badlands</h3>
+            <p>HackTheBox CTF</p>
+            <span class="cert-year cert-year-ctf">Dec 2024</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">HTB</div>
+          <div class="cert-info">
+            <h3>Liebherr Hackathon — CTF Open Qualification</h3>
+            <p>HackTheBox CTF</p>
+            <span class="cert-year cert-year-ctf">Nov 2024</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">CTF</div>
+          <div class="cert-info">
+            <h3>Infobahn CTF 2025</h3>
+            <p>CTFtime — Rank #538</p>
+            <span class="cert-year cert-year-ctf">2025</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">CTF</div>
+          <div class="cert-info">
+            <h3>osu!gaming CTF 2025</h3>
+            <p>CTFtime — Rank #727</p>
+            <span class="cert-year cert-year-ctf">2025</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">CTF</div>
+          <div class="cert-info">
+            <h3>SunshineCTF 2025</h3>
+            <p>CTFtime — Rank #1184</p>
+            <span class="cert-year cert-year-ctf">2025</span>
+          </div>
+        </div>
+
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">CTF</div>
+          <div class="cert-info">
+            <h3>K17 CTF 2025</h3>
+            <p>CTFtime — Rank #695</p>
+            <span class="cert-year cert-year-ctf">2025</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title"><span class="accent">//</span> contact</h2>
+      <p class="contact-intro">
+        Available for freelance penetration testing engagements, bug bounty collaboration, and security consulting.
+      </p>
+      <div class="contact-grid">
+        <div class="contact-links">
+          <a class="contact-item" href="mailto:husseinalazzam7@gmail.com">
+            <span class="contact-icon">✉</span>
+            <span>husseinalazzam7@gmail.com</span>
+          </a>
+          <a class="contact-item" href="https://github.com/" target="_blank" rel="noopener">
+            <svg class="contact-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.382 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 013.003-.404c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.807 5.624-5.479 5.922.43.372.823 1.102.823 2.222v3.293c0 .322.218.694.825.576C20.565 21.796 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a class="contact-item" href="https://www.linkedin.com/in/al-hussein-amir-azzam-9b07a8220/" target="_blank" rel="noopener">
+            <span class="contact-icon">in</span>
+            <span>LinkedIn</span>
+          </a>
+          <a class="contact-item" href="https://app.hackthebox.com/users/Hussein2000" target="_blank" rel="noopener">
+            <span class="contact-icon">⬡</span>
+            <span>HackTheBox Profile</span>
+          </a>
+          <a class="contact-item" href="https://tryhackme.com/p/Alhussein76" target="_blank" rel="noopener">
+            <span class="contact-icon">🔺</span>
+            <span>TryHackMe Profile</span>
+          </a>
+          <a class="contact-item" href="https://ctftime.org/team/364651" target="_blank" rel="noopener">
+            <span class="contact-icon">⚑</span>
+            <span>CTFtime Team</span>
+          </a>
+        </div>
+        <form class="contact-form" onsubmit="handleForm(event)">
+          <input type="text" placeholder="Your Name" required />
+          <input type="email" placeholder="Your Email" required />
+          <input type="text" placeholder="Subject" />
+          <textarea placeholder="Your message..." rows="5" required></textarea>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+          <p class="form-note" id="formNote"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Alhussein Azzam — Built with ❤️ and a lot of Kali Linux</p>
+  </footer>
+
+  <!-- ── VIDEO MODAL ── -->
+  <div class="modal-overlay hidden" id="videoModal">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" onclick="closeModal()">✕</button>
+      <div class="modal-video-wrap">
+        <iframe id="modalIframe" src="" frameborder="0"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

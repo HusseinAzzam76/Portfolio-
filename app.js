@@ -1,0 +1,284 @@
+/* ─── MATRIX RAIN ─── */
+(function () {
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  const chars = '01アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+  let cols, drops;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols = Math.floor(canvas.width / 16);
+    drops = Array(cols).fill(1);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw() {
+    ctx.fillStyle = 'rgba(10,14,15,.06)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff9d';
+    ctx.font = '13px JetBrains Mono, monospace';
+    drops.forEach((y, i) => {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * 16, y * 16);
+      if (y * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+  }
+  setInterval(draw, 45);
+})();
+
+/* ─── TYPEWRITER ─── */
+(function () {
+  const phrases = [
+    'Penetration Tester',
+    'Security Researcher',
+    'CTF Player',
+    'Bug Hunter',
+    'Red Teamer',
+  ];
+  const el = document.getElementById('typewriter');
+  let pi = 0, ci = 0, deleting = false;
+
+  function tick() {
+    const phrase = phrases[pi];
+    el.textContent = deleting ? phrase.slice(0, ci--) : phrase.slice(0, ci++);
+    let delay = deleting ? 60 : 90;
+    if (!deleting && ci > phrase.length) { delay = 1800; deleting = true; }
+    if (deleting && ci < 0)             { delay = 400;  deleting = false; pi = (pi + 1) % phrases.length; }
+    setTimeout(tick, delay);
+  }
+  tick();
+})();
+
+/* ─── WRITEUPS DATA ────────────────────────────────────────────────────────────
+   To publish a new writeup, add an object to this array and save the file.
+   Fields:
+     title      – display name
+     platform   – 'htb' | 'thm' | 'ctf' | 'real'
+     difficulty – 'easy' | 'medium' | 'hard' | 'critical'
+     tags       – array of strings (no # prefix needed)
+     desc       – short description shown on the card
+     url        – full writeup link; leave '' to show "Coming soon"
+     videoUrl   – YouTube URL (leave '' if no video)
+     date       – 'YYYY-MM-DD' string, or '' to hide
+── ─────────────────────────────────────────────────────────────────────────── */
+const WRITEUPS = [
+  // Add your real writeups here. Example:
+  // {
+  //   title: 'Machine Name',
+  //   platform: 'htb',         // htb | thm | ctf | real
+  //   difficulty: 'medium',    // easy | medium | hard | critical
+  //   tags: ['Tag1', 'Tag2'],
+  //   desc: 'Short description of the machine and techniques used.',
+  //   url: 'https://your-writeup-link.com',
+  //   videoUrl: 'https://youtube.com/watch?v=VIDEO_ID',  // or ''
+  //   date: '2025-01-15',
+  // },
+];
+
+/* ─── YOUTUBE HELPER ─── */
+function getYouTubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  return m ? m[1] : null;
+}
+
+/* ─── RENDER WRITEUPS ─── */
+const PLATFORM_LABELS = { htb: 'HackTheBox', thm: 'TryHackMe', ctf: 'CTF', real: 'Real World' };
+
+function renderWriteups() {
+  const grid  = document.getElementById('writeupsGrid');
+  const empty = document.getElementById('writeupsEmpty');
+
+  if (!WRITEUPS.length) {
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  grid.innerHTML = WRITEUPS.map(w => {
+    const ytId        = getYouTubeId(w.videoUrl);
+    const thumb       = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+    const diffLabel   = w.difficulty.charAt(0).toUpperCase() + w.difficulty.slice(1);
+    const platLabel   = PLATFORM_LABELS[w.platform] || w.platform;
+
+    return `
+      <article class="card" data-category="${w.platform}">
+        ${thumb ? `
+        <div class="card-thumb" style="background-image:url('${thumb}')" onclick="openVideoModal('${w.videoUrl}')">
+          <div class="card-play">▶</div>
+        </div>` : ''}
+        <div class="card-header">
+          <span class="badge badge-${w.platform}">${platLabel}</span>
+          <span class="badge badge-${w.difficulty}">${diffLabel}</span>
+          ${w.date ? `<span class="card-date">${w.date}</span>` : ''}
+        </div>
+        <h3 class="card-title">${w.title}</h3>
+        <p class="card-desc">${w.desc}</p>
+        <div class="card-tags">${w.tags.map(t => `<span>#${t}</span>`).join('')}</div>
+        <div class="card-actions">
+          ${w.url
+            ? `<a class="card-link" href="${w.url}" target="_blank" rel="noopener">Read Writeup →</a>`
+            : `<span class="card-link-dim">Coming soon…</span>`}
+          ${ytId ? `<button class="card-video-btn" onclick="openVideoModal('${w.videoUrl}')">▶ Watch</button>` : ''}
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ─── VIDEO MODAL ─── */
+function openVideoModal(url) {
+  const id = getYouTubeId(url);
+  if (!id) return;
+  document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+  document.getElementById('videoModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('videoModal').classList.add('hidden');
+  document.getElementById('modalIframe').src = '';
+  document.body.style.overflow = '';
+}
+
+/* ─── COUNTER ANIMATION ─── */
+function animateCounters() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const target = +el.dataset.target;
+    let current = 0;
+    const step = Math.ceil(target / 40);
+    const t = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current + (target >= 10 ? '+' : '');
+      if (current >= target) clearInterval(t);
+    }, 40);
+  });
+}
+
+/* ─── REVEAL ON SCROLL ─── */
+function initReveal() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll(
+    '.card, .skill-card, .project-card, .cert-card, .about-text, .terminal-card, .contact-item'
+  ).forEach(el => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+}
+
+/* ─── COUNTER TRIGGER ─── */
+(function () {
+  const hero = document.getElementById('hero');
+  let triggered = false;
+  const io = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !triggered) { triggered = true; animateCounters(); }
+  }, { threshold: 0.5 });
+  io.observe(hero);
+})();
+
+/* ─── NAV SCROLL STYLE ─── */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  nav.style.borderBottomColor = window.scrollY > 20 ? 'rgba(0,255,157,.15)' : 'var(--border)';
+});
+
+/* ─── FILTER ─── */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('#writeupsGrid .card').forEach(card => {
+      const match = filter === 'all' || card.dataset.category === filter;
+      card.classList.toggle('hidden', !match);
+    });
+  });
+});
+
+/* ─── MOBILE MENU ─── */
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+/* ─── CONTACT FORM ─── */
+function handleForm(e) {
+  e.preventDefault();
+  const note = document.getElementById('formNote');
+  note.textContent = '✓ Message sent! I\'ll get back to you soon.';
+  e.target.reset();
+  setTimeout(() => note.textContent = '', 5000);
+}
+
+/* ─── TRYHACKME LIVE STATS ─── */
+async function loadTHMStats() {
+  const loading  = document.getElementById('thmLoading');
+  const error    = document.getElementById('thmError');
+  const grid     = document.getElementById('thmGrid');
+  const badgeRow = document.getElementById('thmBadgeIcons');
+
+  try {
+    if (location.protocol === 'file:') {
+      loading.textContent = '⚠ Deploy to Vercel to see live stats. Badge above is always live.';
+      return;
+    }
+
+    const res = await fetch('/api/tryhackme');
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    loading.classList.add('hidden');
+
+    const set = (id, val, suffix = '') =>
+      document.getElementById(id).textContent = val != null ? `${val}${suffix}` : '—';
+
+    set('thmRank',   data.rank   != null ? `#${data.rank.toLocaleString()}` : null);
+    set('thmPoints', data.points != null ? data.points.toLocaleString()    : null);
+    set('thmRooms',  data.completedRooms);
+    set('thmStreak', data.streak, data.streak != null ? ' days' : '');
+    set('thmBadges', data.badgeCount);
+
+    grid.classList.remove('hidden');
+
+    if (data.badges && data.badges.length) {
+      data.badges.forEach(badge => {
+        const img = badge.imageUrl || badge.image || badge.img;
+        if (!img) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'thm-badge-icon';
+        wrap.title = badge.name || '';
+        const i = document.createElement('img');
+        i.src = img;
+        i.alt = badge.name || 'badge';
+        i.loading = 'lazy';
+        wrap.appendChild(i);
+        badgeRow.appendChild(wrap);
+      });
+      if (badgeRow.children.length) badgeRow.classList.remove('hidden');
+    }
+
+  } catch (err) {
+    loading.classList.add('hidden');
+    error.textContent = `Could not load live stats: ${err.message}`;
+    error.classList.remove('hidden');
+  }
+}
+
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderWriteups();
+  initReveal();
+
+  document.getElementById('videoModal').addEventListener('click', e => {
+    if (e.target.id === 'videoModal') closeModal();
+  });
+
+  loadTHMStats();
+});
