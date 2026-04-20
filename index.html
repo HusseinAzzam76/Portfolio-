@@ -66,6 +66,13 @@
   <section id="about" class="section">
     <div class="container">
       <h2 class="section-title"><span class="accent">//</span> whoami</h2>
+      <div class="about-profile">
+        <img src="profile.png" alt="Alhussein Azzam" class="about-avatar" />
+        <div class="about-intro">
+          <h3 class="about-intro-name">Alhussein Azzam</h3>
+          <p class="about-intro-role">Penetration Tester &amp; Security Researcher</p>
+        </div>
+      </div>
       <div class="about-grid">
         <div class="about-text">
           <p>
@@ -175,6 +182,90 @@
       <h3 class="thm-rooms-title"><span class="accent">▶</span> Completed Rooms</h3>
       <div class="thm-rooms-grid">
 
+        <a class="thm-room-card" href="https://tryhackme.com/room/dailybugle" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-hard">Hard</span><span class="thm-room-cat">CTF</span></div>
+          <h4>Daily Bugle</h4>
+          <p>Compromised a Joomla CMS via SQLi, cracked password hashes, and escalated privileges using yum.</p>
+          <div class="card-tags"><span>#SQLi</span><span>#Joomla</span><span>#PrivEsc</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/blue" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Windows</span></div>
+          <h4>Blue</h4>
+          <p>Exploited EternalBlue (MS17-010) on a Windows 7 target with Metasploit, dumped hashes with Mimikatz.</p>
+          <div class="card-tags"><span>#EternalBlue</span><span>#Windows</span><span>#Metasploit</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/alfred" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Windows</span></div>
+          <h4>Alfred</h4>
+          <p>Exploited Jenkins to gain initial access, then escalated privileges by abusing Windows authentication tokens.</p>
+          <div class="card-tags"><span>#Jenkins</span><span>#TokenImpersonation</span><span>#Windows</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/hackpark" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Windows</span></div>
+          <h4>HackPark</h4>
+          <p>Bruteforced a login with Hydra, exploited a public CVE, and escalated privileges on a Windows machine.</p>
+          <div class="card-tags"><span>#Hydra</span><span>#CVE</span><span>#Windows</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/kenobi" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Linux</span></div>
+          <h4>Kenobi</h4>
+          <p>Enumerated Samba shares, exploited a vulnerable ProFTPD version, and escalated via PATH variable manipulation.</p>
+          <div class="card-tags"><span>#Samba</span><span>#FTP</span><span>#PathHijack</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/steelmountain" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Windows</span></div>
+          <h4>Steel Mountain</h4>
+          <p>Exploited an HFS vulnerability via Metasploit and escalated privileges using PowerShell enumeration.</p>
+          <div class="card-tags"><span>#Metasploit</span><span>#PowerShell</span><span>#Windows</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/gamezone" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Linux</span></div>
+          <h4>Game Zone</h4>
+          <p>Used SQLMap to bypass auth, cracked hashes, exposed internal services via SSH tunneling, and rooted the box.</p>
+          <div class="card-tags"><span>#SQLMap</span><span>#SSHTunnel</span><span>#PrivEsc</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/vulnversity" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Linux</span></div>
+          <h4>Vulnversity</h4>
+          <p>Active recon, file upload bypass to gain a shell, then SUID exploitation to escalate to root.</p>
+          <div class="card-tags"><span>#FileUpload</span><span>#SUID</span><span>#Recon</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/authenticationbypass" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Web</span></div>
+          <h4>Authentication Bypass</h4>
+          <p>Defeated login mechanisms using username enumeration, logic flaws, and cookie manipulation.</p>
+          <div class="card-tags"><span>#AuthBypass</span><span>#WebSec</span><span>#Cookies</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/fileinc" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Web</span></div>
+          <h4>File Inclusion</h4>
+          <p>Exploited LFI and RFI vulnerabilities to read sensitive files and achieve remote code execution.</p>
+          <div class="card-tags"><span>#LFI</span><span>#RFI</span><span>#RCE</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/linuxprivesc" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Linux</span></div>
+          <h4>Linux Privilege Escalation</h4>
+          <p>Practised 8+ privesc techniques: SUID, sudo misconfiguration, cron jobs, writable paths, and kernel exploits.</p>
+          <div class="card-tags"><span>#Linux</span><span>#PrivEsc</span><span>#SUID</span></div>
+        </a>
+
+        <a class="thm-room-card" href="https://tryhackme.com/room/windowsprivesc20" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Windows</span></div>
+          <h4>Windows Privilege Escalation</h4>
+          <p>Windows privesc via unquoted service paths, AlwaysInstallElevated, token impersonation, and registry exploits.</p>
+          <div class="card-tags"><span>#Windows</span><span>#PrivEsc</span><span>#Tokens</span></div>
+        </a>
+
         <a class="thm-room-card" href="https://tryhackme.com/room/adventofcyber2024" target="_blank" rel="noopener">
           <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Advent of Cyber</span></div>
           <h4>Advent of Cyber 2024</h4>
@@ -182,85 +273,28 @@
           <div class="card-tags"><span>#WebSec</span><span>#Forensics</span><span>#OSINT</span></div>
         </a>
 
-        <a class="thm-room-card" href="https://tryhackme.com/room/introtoresearch" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Fundamentals</span></div>
-          <h4>Introduction to Research</h4>
-          <p>Learning the methodology and mindset for security research, vulnerability discovery, and CVE hunting.</p>
-          <div class="card-tags"><span>#Research</span><span>#Methodology</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/pythonbasics" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Scripting</span></div>
-          <h4>Python Basics</h4>
-          <p>Python fundamentals for security scripting — writing port scanners, brute-force tools, and exploit helpers.</p>
-          <div class="card-tags"><span>#Python</span><span>#Scripting</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/networkservices" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Network</span></div>
-          <h4>Network Services</h4>
-          <p>Enumeration and exploitation of common network services: SMB, Telnet, FTP, and NFS.</p>
-          <div class="card-tags"><span>#SMB</span><span>#FTP</span><span>#Enumeration</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/attacktivedirectory" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Active Directory</span></div>
-          <h4>Attacktive Directory</h4>
-          <p>Full AD attack chain: AS-REP Roasting, Kerberoasting, Pass-the-Hash to Domain Admin.</p>
-          <div class="card-tags"><span>#ActiveDirectory</span><span>#Kerberos</span><span>#PrivEsc</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/owasptop10" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Web</span></div>
-          <h4>OWASP Top 10 — 2021</h4>
-          <p>Hands-on exploitation of all OWASP Top 10 vulnerabilities including SQLi, XXE, IDOR, and SSRF.</p>
-          <div class="card-tags"><span>#OWASP</span><span>#WebSec</span><span>#SQLi</span></div>
-        </a>
-
         <a class="thm-room-card" href="https://tryhackme.com/room/picklerick" target="_blank" rel="noopener">
           <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">CTF</span></div>
           <h4>Pickle Rick</h4>
           <p>Web app CTF requiring command injection, directory traversal, and privilege escalation to root.</p>
-          <div class="card-tags"><span>#WebSec</span><span>#CommandInjection</span><span>#PrivEsc</span></div>
+          <div class="card-tags"><span>#CommandInjection</span><span>#WebSec</span><span>#PrivEsc</span></div>
         </a>
 
-        <a class="thm-room-card" href="https://tryhackme.com/room/blue" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Windows</span></div>
-          <h4>Blue</h4>
-          <p>Exploiting EternalBlue (MS17-010) on a Windows 7 target with Metasploit, dumping hashes with Mimikatz.</p>
-          <div class="card-tags"><span>#EternalBlue</span><span>#Windows</span><span>#Metasploit</span></div>
+        <a class="thm-room-card" href="https://tryhackme.com/room/skynet" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">CTF</span></div>
+          <h4>Skynet</h4>
+          <p>Enumerated Samba shares, exploited a vulnerable CMS, and escalated to root via a cron job wildcard injection.</p>
+          <div class="card-tags"><span>#Samba</span><span>#CMS</span><span>#CronJob</span></div>
         </a>
 
-        <a class="thm-room-card" href="https://tryhackme.com/room/mrrobot" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">CTF</span></div>
-          <h4>Mr Robot CTF</h4>
-          <p>WordPress exploitation, password cracking, and SUID abuse to obtain 3 hidden keys as root.</p>
-          <div class="card-tags"><span>#WordPress</span><span>#SUID</span><span>#PasswordCracking</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/nmap" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Recon</span></div>
-          <h4>Nmap</h4>
-          <p>Deep dive into Nmap scan types, NSE scripting, OS fingerprinting, and firewall evasion techniques.</p>
-          <div class="card-tags"><span>#Nmap</span><span>#Recon</span><span>#PortScanning</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/linuxprivesc" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Linux</span></div>
-          <h4>Linux Privilege Escalation</h4>
-          <p>Comprehensive Linux privesc: SUID/GUID, sudo misconfig, cron jobs, writable paths, and kernel exploits.</p>
-          <div class="card-tags"><span>#Linux</span><span>#PrivEsc</span><span>#SUID</span></div>
-        </a>
-
-        <a class="thm-room-card" href="https://tryhackme.com/room/windowsprivesc20" target="_blank" rel="noopener">
-          <div class="thm-room-header"><span class="badge badge-medium">Medium</span><span class="thm-room-cat">Windows</span></div>
-          <h4>Windows Privilege Escalation</h4>
-          <p>Windows privesc techniques: unquoted service paths, AlwaysInstallElevated, token impersonation, registry exploits.</p>
-          <div class="card-tags"><span>#Windows</span><span>#PrivEsc</span><span>#Tokens</span></div>
+        <a class="thm-room-card" href="https://tryhackme.com/room/burpsuitebasics" target="_blank" rel="noopener">
+          <div class="thm-room-header"><span class="badge badge-easy">Easy</span><span class="thm-room-cat">Web</span></div>
+          <h4>Burp Suite: The Basics</h4>
+          <p>Hands-on introduction to Burp Suite — proxy, intercept, Repeater, and web application attack workflows.</p>
+          <div class="card-tags"><span>#BurpSuite</span><span>#WebSec</span><span>#Proxy</span></div>
         </a>
 
       </div>
-      <p class="thm-rooms-note">⚠ Update these cards with your actual completed rooms — share your list and I'll replace them.</p>
 
     </div>
   </section>
@@ -322,6 +356,15 @@
           <ul>
             <li>Android APK Analysis</li><li>AWS Misconfiguration</li><li>S3 Bucket Hunting</li>
             <li>IAM Privilege Escalation</li><li>Container Escapes</li>
+          </ul>
+        </div>
+
+        <div class="skill-card">
+          <div class="skill-icon">🔬</div>
+          <h3>Digital Forensics</h3>
+          <ul>
+            <li>Autopsy</li><li>Disk &amp; Memory Analysis</li><li>File Carving</li>
+            <li>Log Analysis</li><li>Malware Triage</li>
           </ul>
         </div>
 
