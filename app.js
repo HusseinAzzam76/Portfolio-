@@ -299,10 +299,11 @@ async function loadTHMStats() {
 document.addEventListener('DOMContentLoaded', () => {
   loadWriteups();
   initReveal();
+  document.getElementById('thmBadge').src =
+    `https://tryhackme-badges.s3.amazonaws.com/Alhussein76.png?t=${Date.now()}`;
 
   document.getElementById('videoModal').addEventListener('click', e => {
     if (e.target.id === 'videoModal') closeModal();
   });
 
-  loadTHMStats();
 });
