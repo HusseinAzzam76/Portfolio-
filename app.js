@@ -1,32 +1,64 @@
-/* ─── MATRIX RAIN ─── */
+/* ─── PARTICLE NETWORK ─── */
 (function () {
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
-  const chars = '01アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-  let cols, drops;
+  const ACCENT = '0,255,157';
+  const COUNT = 70;
+  const MAX_DIST = 160;
+  let particles = [];
 
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    cols = Math.floor(canvas.width / 16);
-    drops = Array(cols).fill(1);
   }
-  resize();
-  window.addEventListener('resize', resize);
+
+  function initParticles() {
+    particles = Array.from({ length: COUNT }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 1.5 + 1,
+    }));
+  }
 
   function draw() {
-    ctx.fillStyle = 'rgba(10,14,15,.06)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#00ff9d';
-    ctx.font = '13px JetBrains Mono, monospace';
-    drops.forEach((y, i) => {
-      const char = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(char, i * 16, y * 16);
-      if (y * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          ctx.strokeStyle = `rgba(${ACCENT},${(1 - dist / MAX_DIST) * 0.25})`;
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    particles.forEach(p => {
+      ctx.fillStyle = `rgba(${ACCENT},0.55)`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
     });
+
+    requestAnimationFrame(draw);
   }
-  setInterval(draw, 45);
+
+  resize();
+  initParticles();
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  draw();
 })();
 
 /* ─── TYPEWRITER ─── */
