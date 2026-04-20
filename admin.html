@@ -189,6 +189,18 @@
     .empty-state { color: var(--muted); text-align: center; padding: 36px; font-size: 0.9rem; }
     .hidden { display: none !important; }
 
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; }
+    .tab-btn {
+      background: transparent; border: none; color: var(--muted);
+      padding: 8px 22px; border-radius: 7px; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: .85rem;
+      transition: all .2s;
+    }
+    .tab-btn.active { background: var(--accent); color: #000; font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
     /* ── STATS ROW ── */
     .stats-row { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
     .stat-chip {
@@ -231,6 +243,15 @@
     </header>
 
     <div class="dash-body">
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('writeups')">// Writeups</button>
+        <button class="tab-btn" onclick="switchTab('videos')">// Videos</button>
+      </div>
+
+      <!-- ── WRITEUPS TAB ── -->
+      <div class="tab-panel active" id="tab-writeups">
 
       <!-- Stats -->
       <div class="stats-row" id="statsRow">
@@ -315,6 +336,59 @@
         <div class="card-title">// Published Writeups</div>
         <div id="writeupList"><p class="empty-state">Loading...</p></div>
       </div>
+
+      </div><!-- end tab-writeups -->
+
+      <!-- ── VIDEOS TAB ── -->
+      <div class="tab-panel" id="tab-videos">
+
+        <!-- Add Video -->
+        <div class="card">
+          <div class="card-title">// Upload New Video</div>
+          <div id="videoAddMsg"></div>
+          <div class="form-grid">
+            <div>
+              <label>Title *</label>
+              <input type="text" id="v-title" placeholder="e.g. HackTheBox — Forest Walkthrough" />
+            </div>
+            <div>
+              <label>Date</label>
+              <input type="date" id="v-date" />
+            </div>
+            <div>
+              <label>YouTube URL *</label>
+              <input type="url" id="v-url" placeholder="https://youtube.com/watch?v=..." />
+            </div>
+            <div>
+              <label>Category</label>
+              <select id="v-category">
+                <option value="htb">HackTheBox</option>
+                <option value="thm">TryHackMe</option>
+                <option value="ctf">CTF</option>
+                <option value="pentest">Pentest</option>
+                <option value="tutorial">Tutorial</option>
+              </select>
+            </div>
+            <div class="form-full">
+              <label>Tags</label>
+              <input type="text" id="v-tags" placeholder="Windows, PrivEsc, AD" />
+              <p class="tags-hint">Separate tags with commas</p>
+            </div>
+            <div class="form-full">
+              <label>Description</label>
+              <textarea id="v-desc" placeholder="Short description shown under the video..."></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="uploadVideoBtn" onclick="addVideo()">Upload Video →</button>
+        </div>
+
+        <!-- Video List -->
+        <div class="card">
+          <div class="card-title">// Published Videos</div>
+          <div id="videoList"><p class="empty-state">Loading...</p></div>
+        </div>
+
+      </div><!-- end tab-videos -->
 
     </div>
   </div>
@@ -464,6 +538,83 @@
     document.getElementById('passwordInput')?.addEventListener('keydown', e => {
       if (e.key === 'Enter') login();
     });
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      event.target.classList.add('active');
+      if (name === 'videos') loadVideos();
+    }
+
+    async function loadVideos() {
+      const list = document.getElementById('videoList');
+      try {
+        const res = await fetch('/api/videos');
+        const data = await res.json();
+        if (!data.length) {
+          list.innerHTML = '<p class="empty-state">No videos yet — upload your first one above.</p>';
+          return;
+        }
+        list.innerHTML = '<div class="writeup-list">' + data.map(v => `
+          <div class="writeup-row">
+            <div class="writeup-row-info">
+              <div class="writeup-row-title">${esc(v.title)}</div>
+              <div class="writeup-row-meta">${v.date || 'No date'} · ${v.category}</div>
+            </div>
+            <span class="badge badge-${v.category === 'htb' ? 'htb' : v.category === 'thm' ? 'thm' : v.category === 'ctf' ? 'ctf' : 'real'}">${(v.category||'').toUpperCase()}</span>
+            <button class="btn-sm-danger" onclick="deleteVideo('${v.id}', '${esc(v.title)}')">Delete</button>
+          </div>
+        `).join('') + '</div>';
+      } catch (e) {
+        list.innerHTML = '<p class="empty-state">Failed to load videos.</p>';
+      }
+    }
+
+    async function addVideo() {
+      const title    = document.getElementById('v-title').value.trim();
+      const youtube_url = document.getElementById('v-url').value.trim();
+      const category = document.getElementById('v-category').value;
+      const tagsRaw  = document.getElementById('v-tags').value;
+      const tags     = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+      const description = document.getElementById('v-desc').value.trim();
+      const date     = document.getElementById('v-date').value;
+
+      if (!title)       return showMsg('videoAddMsg', 'error', 'Title is required.');
+      if (!youtube_url) return showMsg('videoAddMsg', 'error', 'YouTube URL is required.');
+
+      setLoading('uploadVideoBtn', true, 'Uploading…');
+      try {
+        const res = await fetch('/api/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'video_add', password: savedPassword,
+            data: { title, youtube_url, category, tags, description, date: date || null },
+          }),
+        });
+        if (res.ok) {
+          showMsg('videoAddMsg', 'success', `"${title}" uploaded successfully!`);
+          ['v-title','v-url','v-tags','v-desc','v-date'].forEach(id => document.getElementById(id).value = '');
+          loadVideos();
+        } else {
+          showMsg('videoAddMsg', 'error', 'Failed to upload — check Supabase config.');
+        }
+      } catch (e) {
+        showMsg('videoAddMsg', 'error', 'Network error. Try again.');
+      }
+      setLoading('uploadVideoBtn', false, 'Upload Video →');
+    }
+
+    async function deleteVideo(id, title) {
+      if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+      await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'video_delete', password: savedPassword, id }),
+      });
+      loadVideos();
+    }
   </script>
 
 </body>

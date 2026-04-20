@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Videos — Alhussein Azzam</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080b12; --bg2: #0b0f18;
+      --card: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.07);
+      --accent: #00ff9d; --accent2: #00c97a; --accent3: #0ff;
+      --text: #c8d8e0; --text-dim: #4a6070;
+      --red: #ff4d6d; --yellow: #ffd166; --blue: #4cc9f0; --purple: #a78bfa;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 99;
+      background: rgba(8,11,18,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,255,157,0.08);
+      padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: var(--font-mono); color: #fff; font-size: 1rem; font-weight: 700; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-mono); font-size: .82rem; color: var(--text-dim);
+      transition: color .2s; letter-spacing: .02em;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* HERO */
+    .page-hero {
+      padding: 80px 24px 48px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .page-hero-pre {
+      font-family: var(--font-mono); font-size: .75rem;
+      color: var(--accent); letter-spacing: .2em; text-transform: uppercase;
+      margin-bottom: 12px; opacity: .8;
+    }
+    .page-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700;
+      color: #fff; letter-spacing: -.03em; margin-bottom: 12px;
+    }
+    .page-hero p { color: var(--text-dim); font-size: 1rem; max-width: 520px; line-height: 1.8; }
+
+    /* FILTER */
+    .filter-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 32px; }
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-dim); padding: 6px 18px; border-radius: 4px;
+      font-size: .76rem; cursor: pointer; font-family: var(--font-mono);
+      transition: all .2s; letter-spacing: .04em;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent); border-color: var(--accent);
+      color: #000; box-shadow: 0 0 16px rgba(0,255,157,.25);
+    }
+
+    /* GRID */
+    .videos-container { max-width: 1100px; margin: 0 auto; padding: 0 24px 96px; }
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    /* VIDEO CARD */
+    .video-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      backdrop-filter: blur(10px);
+      display: flex; flex-direction: column;
+    }
+    .video-card:hover {
+      border-color: rgba(0,255,157,.4);
+      transform: translateY(-4px);
+      box-shadow: 0 0 28px rgba(0,255,157,.1);
+    }
+    .video-card.hidden { display: none; }
+
+    .video-thumb {
+      position: relative; width: 100%; padding-top: 56.25%;
+      background: #0d1520; cursor: pointer; overflow: hidden;
+    }
+    .video-thumb img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; transition: transform .3s;
+    }
+    .video-card:hover .video-thumb img { transform: scale(1.04); }
+    .video-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.35);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .video-card:hover .video-thumb-overlay { background: rgba(0,0,0,.15); }
+    .play-btn {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(0,255,157,.9);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 0 20px rgba(0,255,157,.4);
+    }
+    .video-card:hover .play-btn { transform: scale(1.1); box-shadow: 0 0 30px rgba(0,255,157,.6); }
+    .play-btn svg { fill: #000; margin-left: 4px; }
+
+    .video-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .video-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .video-cat {
+      font-family: var(--font-mono); font-size: .68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .06em;
+      padding: 3px 10px; border-radius: 3px;
+    }
+    .cat-ctf     { background: rgba(0,200,255,.1); color: #7ee8fa; border: 1px solid rgba(0,200,255,.2); }
+    .cat-htb     { background: rgba(159,0,255,.12); color: #bf7fff; border: 1px solid rgba(159,0,255,.2); }
+    .cat-thm     { background: rgba(255,70,85,.12); color: #ff8a95; border: 1px solid rgba(255,70,85,.2); }
+    .cat-pentest { background: rgba(0,255,157,.08); color: var(--accent); border: 1px solid rgba(0,255,157,.15); }
+    .cat-tutorial{ background: rgba(255,209,0,.1); color: var(--yellow); border: 1px solid rgba(255,209,0,.2); }
+
+    .video-date { font-family: var(--font-mono); font-size: .68rem; color: var(--text-dim); margin-left: auto; }
+    .video-title { font-size: 1rem; font-weight: 700; color: #fff; line-height: 1.4; }
+    .video-desc  { font-size: .82rem; color: var(--text-dim); line-height: 1.65; flex: 1; }
+    .video-tags  { display: flex; gap: 6px; flex-wrap: wrap; }
+    .video-tags span {
+      font-size: .68rem; font-family: var(--font-mono); color: var(--text-dim);
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 3px;
+    }
+
+    /* EMPTY */
+    .empty-state {
+      text-align: center; padding: 80px 24px;
+      font-family: var(--font-mono); color: var(--text-dim); font-size: .9rem;
+      grid-column: 1 / -1;
+    }
+    .empty-state span { color: var(--accent); }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.9);
+      z-index: 2000; display: none;
+      align-items: center; justify-content: center;
+      padding: 24px; backdrop-filter: blur(12px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      position: relative; width: 100%; max-width: 960px;
+      background: rgba(8,11,18,.98);
+      border: 1px solid rgba(0,255,157,.15);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,255,157,.08);
+    }
+    .modal-close {
+      position: absolute; top: 12px; right: 14px; z-index: 10;
+      background: rgba(0,0,0,.7); border: 1px solid var(--border);
+      color: #fff; width: 32px; height: 32px; border-radius: 50%;
+      cursor: pointer; font-size: .9rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .modal-close:hover { background: var(--red); border-color: var(--red); }
+    .modal-video-wrap { position: relative; padding-top: 56.25%; }
+    .modal-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    /* LOADING */
+    .loading {
+      grid-column: 1/-1; text-align: center; padding: 60px;
+      font-family: var(--font-mono); color: var(--text-dim); font-size: .85rem;
+    }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      margin-right: 10px; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .videos-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">&gt; alhussein<span>_</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/#skills">Skills</a></li>
+    <li><a href="/#projects">Projects</a></li>
+    <li><a href="/videos.html" class="active">Videos</a></li>
+    <li><a href="/#writeups">Writeups</a></li>
+    <li><a href="/#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <p class="page-hero-pre">// content</p>
+  <h1>Videos</h1>
+  <p>CTF walkthroughs, pentesting demos, and security tutorials. New videos added regularly.</p>
+</div>
+
+<div class="filter-wrap">
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="htb">HackTheBox</button>
+    <button class="filter-btn" data-filter="thm">TryHackMe</button>
+    <button class="filter-btn" data-filter="ctf">CTF</button>
+    <button class="filter-btn" data-filter="pentest">Pentest</button>
+    <button class="filter-btn" data-filter="tutorial">Tutorial</button>
+  </div>
+</div>
+
+<div class="videos-container">
+  <div class="videos-grid" id="videosGrid">
+    <div class="loading"><span class="spinner"></span>Loading videos…</div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-video-wrap">
+      <iframe id="modalIframe" frameborder="0" allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CAT_LABELS = { ctf:'CTF', htb:'HackTheBox', thm:'TryHackMe', pentest:'Pentest', tutorial:'Tutorial' };
+
+  function getYouTubeId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    return m ? m[1] : null;
+  }
+
+  function openModal(url) {
+    const id = getYouTubeId(url);
+    if (!id) return;
+    document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    document.getElementById('videoModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('videoModal').classList.remove('open');
+    document.getElementById('modalIframe').src = '';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('videoModal').addEventListener('click', e => {
+    if (e.target.id === 'videoModal') closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function renderVideos(videos) {
+    const grid = document.getElementById('videosGrid');
+    if (!videos.length) {
+      grid.innerHTML = `<div class="empty-state">No videos yet — check back soon.<br><span>// upload via /admin</span></div>`;
+      return;
+    }
+    grid.innerHTML = videos.map(v => {
+      const ytId = getYouTubeId(v.youtube_url);
+      const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+      const tags  = Array.isArray(v.tags) ? v.tags : [];
+      const cat   = v.category || 'tutorial';
+      return `
+        <div class="video-card" data-category="${cat}">
+          <div class="video-thumb" onclick="openModal('${v.youtube_url}')">
+            ${thumb ? `<img src="${thumb}" alt="${v.title}" loading="lazy" />` : ''}
+            <div class="video-thumb-overlay">
+              <div class="play-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="video-body">
+            <div class="video-meta">
+              <span class="video-cat cat-${cat}">${CAT_LABELS[cat] || cat}</span>
+              ${v.date ? `<span class="video-date">${v.date}</span>` : ''}
+            </div>
+            <h3 class="video-title">${v.title}</h3>
+            ${v.description ? `<p class="video-desc">${v.description}</p>` : ''}
+            ${tags.length ? `<div class="video-tags">${tags.map(t=>`<span>#${t}</span>`).join('')}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function loadVideos() {
+    try {
+      if (location.protocol === 'file:') { renderVideos([]); return; }
+      const res  = await fetch('/api/videos');
+      const data = await res.json();
+      renderVideos(data);
+    } catch (e) {
+      renderVideos([]);
+    }
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.video-card').forEach(c => {
+        c.classList.toggle('hidden', f !== 'all' && c.dataset.category !== f);
+      });
+    });
+  });
+
+  loadVideos();
+</script>
+</body>
+</html>

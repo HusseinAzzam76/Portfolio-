@@ -13,18 +13,18 @@ module.exports = async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
+  const headers = {
+    apikey: SUPABASE_SERVICE_KEY,
+    Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+    'Content-Type': 'application/json',
+    Prefer: 'return=representation',
+  };
+
   if (action === 'ping') return res.json({ ok: true });
 
   if (action === 'add') {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/writeups`, {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify(data),
+      method: 'POST', headers, body: JSON.stringify(data),
     });
     const result = await r.json();
     return res.status(r.ok ? 200 : 400).json(result);
@@ -32,11 +32,22 @@ module.exports = async (req, res) => {
 
   if (action === 'delete') {
     await fetch(`${SUPABASE_URL}/rest/v1/writeups?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-      },
+      method: 'DELETE', headers,
+    });
+    return res.json({ success: true });
+  }
+
+  if (action === 'video_add') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/videos`, {
+      method: 'POST', headers, body: JSON.stringify(data),
+    });
+    const result = await r.json();
+    return res.status(r.ok ? 200 : 400).json(result);
+  }
+
+  if (action === 'video_delete') {
+    await fetch(`${SUPABASE_URL}/rest/v1/videos?id=eq.${id}`, {
+      method: 'DELETE', headers,
     });
     return res.json({ success: true });
   }
