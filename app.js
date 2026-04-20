@@ -84,31 +84,7 @@
   tick();
 })();
 
-/* ─── WRITEUPS DATA ────────────────────────────────────────────────────────────
-   To publish a new writeup, add an object to this array and save the file.
-   Fields:
-     title      – display name
-     platform   – 'htb' | 'thm' | 'ctf' | 'real'
-     difficulty – 'easy' | 'medium' | 'hard' | 'critical'
-     tags       – array of strings (no # prefix needed)
-     desc       – short description shown on the card
-     url        – full writeup link; leave '' to show "Coming soon"
-     videoUrl   – YouTube URL (leave '' if no video)
-     date       – 'YYYY-MM-DD' string, or '' to hide
-── ─────────────────────────────────────────────────────────────────────────── */
-const WRITEUPS = [
-  // Add your real writeups here. Example:
-  // {
-  //   title: 'Machine Name',
-  //   platform: 'htb',         // htb | thm | ctf | real
-  //   difficulty: 'medium',    // easy | medium | hard | critical
-  //   tags: ['Tag1', 'Tag2'],
-  //   desc: 'Short description of the machine and techniques used.',
-  //   url: 'https://your-writeup-link.com',
-  //   videoUrl: 'https://youtube.com/watch?v=VIDEO_ID',  // or ''
-  //   date: '2025-01-15',
-  // },
-];
+/* ─── WRITEUPS — loaded live from /api/writeups (Supabase) ─── */
 
 /* ─── YOUTUBE HELPER ─── */
 function getYouTubeId(url) {
@@ -120,25 +96,27 @@ function getYouTubeId(url) {
 /* ─── RENDER WRITEUPS ─── */
 const PLATFORM_LABELS = { htb: 'HackTheBox', thm: 'TryHackMe', ctf: 'CTF', real: 'Real World' };
 
-function renderWriteups() {
+function renderWriteups(writeups) {
   const grid  = document.getElementById('writeupsGrid');
   const empty = document.getElementById('writeupsEmpty');
 
-  if (!WRITEUPS.length) {
+  if (!writeups || !writeups.length) {
     empty.classList.remove('hidden');
     return;
   }
+  empty.classList.add('hidden');
 
-  grid.innerHTML = WRITEUPS.map(w => {
-    const ytId        = getYouTubeId(w.videoUrl);
-    const thumb       = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
-    const diffLabel   = w.difficulty.charAt(0).toUpperCase() + w.difficulty.slice(1);
-    const platLabel   = PLATFORM_LABELS[w.platform] || w.platform;
+  grid.innerHTML = writeups.map(w => {
+    const ytId      = getYouTubeId(w.video_url);
+    const thumb     = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+    const diffLabel = w.difficulty.charAt(0).toUpperCase() + w.difficulty.slice(1);
+    const platLabel = PLATFORM_LABELS[w.platform] || w.platform;
+    const tags      = Array.isArray(w.tags) ? w.tags : [];
 
     return `
       <article class="card" data-category="${w.platform}">
         ${thumb ? `
-        <div class="card-thumb" style="background-image:url('${thumb}')" onclick="openVideoModal('${w.videoUrl}')">
+        <div class="card-thumb" style="background-image:url('${thumb}')" onclick="openVideoModal('${w.video_url}')">
           <div class="card-play">▶</div>
         </div>` : ''}
         <div class="card-header">
@@ -147,17 +125,31 @@ function renderWriteups() {
           ${w.date ? `<span class="card-date">${w.date}</span>` : ''}
         </div>
         <h3 class="card-title">${w.title}</h3>
-        <p class="card-desc">${w.desc}</p>
-        <div class="card-tags">${w.tags.map(t => `<span>#${t}</span>`).join('')}</div>
+        <p class="card-desc">${w.description || ''}</p>
+        <div class="card-tags">${tags.map(t => `<span>#${t}</span>`).join('')}</div>
         <div class="card-actions">
           ${w.url
             ? `<a class="card-link" href="${w.url}" target="_blank" rel="noopener">Read Writeup →</a>`
             : `<span class="card-link-dim">Coming soon…</span>`}
-          ${ytId ? `<button class="card-video-btn" onclick="openVideoModal('${w.videoUrl}')">▶ Watch</button>` : ''}
+          ${ytId ? `<button class="card-video-btn" onclick="openVideoModal('${w.video_url}')">▶ Watch</button>` : ''}
         </div>
       </article>
     `;
   }).join('');
+}
+
+async function loadWriteups() {
+  try {
+    if (location.protocol === 'file:') {
+      renderWriteups([]);
+      return;
+    }
+    const res  = await fetch('/api/writeups');
+    const data = await res.json();
+    renderWriteups(data);
+  } catch (e) {
+    renderWriteups([]);
+  }
 }
 
 /* ─── VIDEO MODAL ─── */
@@ -305,7 +297,7 @@ async function loadTHMStats() {
 
 /* ─── INIT ─── */
 document.addEventListener('DOMContentLoaded', () => {
-  renderWriteups();
+  loadWriteups();
   initReveal();
 
   document.getElementById('videoModal').addEventListener('click', e => {

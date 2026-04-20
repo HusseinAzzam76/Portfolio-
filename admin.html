@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Alhussein Azzam</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e0f;
+      --surface: #111618;
+      --surface2: #161c1e;
+      --border: rgba(255,255,255,.08);
+      --accent: #00ff9d;
+      --purple: #b97eff;
+      --blue: #60c8ff;
+      --red: #ff4d6d;
+      --text: #e8eaed;
+      --muted: #8b949e;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(ellipse at 60% 40%, rgba(0,80,60,.3) 0%, transparent 65%),
+                  radial-gradient(ellipse at 20% 80%, rgba(80,0,120,.2) 0%, transparent 60%);
+    }
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-logo { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 1.1rem; margin-bottom: 6px; }
+    .login-sub  { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+    /* ── FORM ELEMENTS ── */
+    label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; letter-spacing: .03em; }
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 11px 14px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+      transition: border-color .2s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 90px; }
+    select option { background: #111618; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all .2s;
+    }
+    .btn-primary { background: var(--accent); color: #000; width: 100%; margin-top: 4px; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-sm-danger {
+      background: rgba(255,77,109,.12);
+      color: var(--red);
+      border: 1px solid rgba(255,77,109,.25);
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .btn-sm-danger:hover { background: rgba(255,77,109,.22); }
+
+    /* ── DASHBOARD ── */
+    .dashboard { display: none; }
+    .dash-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .dash-logo { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 0.95rem; }
+    .dash-logout {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all .2s;
+    }
+    .dash-logout:hover { border-color: var(--accent); color: var(--accent); }
+
+    .dash-body { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .card-title {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+    .form-full { grid-column: 1 / -1; }
+
+    /* ── TAGS INPUT ── */
+    .tags-hint { font-size: 0.78rem; color: var(--muted); margin-top: -10px; margin-bottom: 14px; }
+
+    /* ── WRITEUP LIST ── */
+    .writeup-list { display: flex; flex-direction: column; gap: 10px; }
+    .writeup-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      transition: border-color .2s;
+    }
+    .writeup-row:hover { border-color: rgba(255,255,255,.15); }
+    .writeup-row-info { flex: 1; min-width: 0; }
+    .writeup-row-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .writeup-row-meta { color: var(--muted); font-size: 0.8rem; margin-top: 3px; }
+
+    /* ── BADGES ── */
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-htb      { background: rgba(158,0,255,.12); color: var(--purple); border: 1px solid rgba(158,0,255,.25); }
+    .badge-thm      { background: rgba(255,60,60,.1);  color: #ff8fa3;       border: 1px solid rgba(255,60,60,.25); }
+    .badge-ctf      { background: rgba(0,180,255,.1);  color: var(--blue);   border: 1px solid rgba(0,180,255,.25); }
+    .badge-real     { background: rgba(0,255,157,.1);  color: var(--accent); border: 1px solid rgba(0,255,157,.25); }
+    .badge-easy     { background: rgba(0,255,157,.1);  color: var(--accent); border: 1px solid rgba(0,255,157,.2); }
+    .badge-medium   { background: rgba(255,167,0,.1);  color: #ffb347;       border: 1px solid rgba(255,167,0,.2); }
+    .badge-hard     { background: rgba(255,77,109,.1); color: #ff8fa3;       border: 1px solid rgba(255,77,109,.2); }
+    .badge-critical { background: rgba(255,50,50,.15); color: #ff4d4d;       border: 1px solid rgba(255,50,50,.3); }
+
+    /* ── MESSAGES ── */
+    .msg { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg-success { background: rgba(0,255,157,.08); color: var(--accent); border: 1px solid rgba(0,255,157,.2); }
+    .msg-error   { background: rgba(255,77,109,.08); color: var(--red);   border: 1px solid rgba(255,77,109,.2); }
+
+    .empty-state { color: var(--muted); text-align: center; padding: 36px; font-size: 0.9rem; }
+    .hidden { display: none !important; }
+
+    /* ── STATS ROW ── */
+    .stats-row { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .stat-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .stat-chip-val { font-size: 1.6rem; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+    .stat-chip-lbl { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .dash-header { padding: 14px 16px; }
+      .card { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOGIN ── -->
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-box">
+      <p class="login-logo">> admin panel</p>
+      <p class="login-sub">Enter your password to manage writeups &amp; content.</p>
+      <div id="loginMsg"></div>
+      <label>Password</label>
+      <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password" />
+      <button class="btn btn-primary" id="loginBtn" onclick="login()">Login →</button>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div class="dashboard" id="dashboard">
+    <header class="dash-header">
+      <span class="dash-logo">> alhussein@sec / admin</span>
+      <button class="dash-logout" onclick="logout()">Logout</button>
+    </header>
+
+    <div class="dash-body">
+
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-chip">
+          <div class="stat-chip-val" id="statTotal">—</div>
+          <div class="stat-chip-lbl">Total Writeups</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip-val" id="statHTB">—</div>
+          <div class="stat-chip-lbl">HackTheBox</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip-val" id="statCTF">—</div>
+          <div class="stat-chip-lbl">CTF</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-chip-val" id="statVideos">—</div>
+          <div class="stat-chip-lbl">With Video</div>
+        </div>
+      </div>
+
+      <!-- Add Writeup -->
+      <div class="card">
+        <div class="card-title">// Publish New Writeup</div>
+        <div id="addMsg"></div>
+        <div class="form-grid">
+
+          <div>
+            <label>Title *</label>
+            <input type="text" id="f-title" placeholder="Machine or CTF challenge name" />
+          </div>
+          <div>
+            <label>Date</label>
+            <input type="date" id="f-date" />
+          </div>
+
+          <div>
+            <label>Platform *</label>
+            <select id="f-platform">
+              <option value="htb">HackTheBox</option>
+              <option value="thm">TryHackMe</option>
+              <option value="ctf">CTF</option>
+              <option value="real">Real World</option>
+            </select>
+          </div>
+          <div>
+            <label>Difficulty *</label>
+            <select id="f-difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+
+          <div class="form-full">
+            <label>Tags</label>
+            <input type="text" id="f-tags" placeholder="SQLi, PrivEsc, Windows" />
+            <p class="tags-hint">Separate tags with commas</p>
+          </div>
+
+          <div class="form-full">
+            <label>Description</label>
+            <textarea id="f-desc" placeholder="Short summary shown on the writeup card..."></textarea>
+          </div>
+
+          <div>
+            <label>Writeup URL</label>
+            <input type="url" id="f-url" placeholder="https://your-writeup-link.com" />
+          </div>
+          <div>
+            <label>YouTube Video URL</label>
+            <input type="url" id="f-video" placeholder="https://youtube.com/watch?v=..." />
+          </div>
+
+        </div>
+        <button class="btn btn-primary" id="publishBtn" onclick="addWriteup()">Publish Writeup →</button>
+      </div>
+
+      <!-- Writeup List -->
+      <div class="card">
+        <div class="card-title">// Published Writeups</div>
+        <div id="writeupList"><p class="empty-state">Loading...</p></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let savedPassword = sessionStorage.getItem('adminPass') || '';
+    if (savedPassword) attemptLogin(savedPassword);
+
+    async function login() {
+      const pw = document.getElementById('passwordInput').value.trim();
+      if (!pw) return;
+      setLoading('loginBtn', true, 'Logging in…');
+      await attemptLogin(pw);
+      setLoading('loginBtn', false, 'Login →');
+    }
+
+    async function attemptLogin(pw) {
+      try {
+        const res = await fetch('/api/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'ping', password: pw }),
+        });
+        if (res.status === 401) {
+          showMsg('loginMsg', 'error', 'Wrong password — try again.');
+          sessionStorage.removeItem('adminPass');
+          return;
+        }
+        sessionStorage.setItem('adminPass', pw);
+        savedPassword = pw;
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadWriteups();
+      } catch (e) {
+        showMsg('loginMsg', 'error', 'Could not connect to server.');
+      }
+    }
+
+    function logout() {
+      sessionStorage.removeItem('adminPass');
+      location.reload();
+    }
+
+    async function loadWriteups() {
+      const list = document.getElementById('writeupList');
+      try {
+        const res = await fetch('/api/writeups');
+        const data = await res.json();
+
+        // update stats
+        document.getElementById('statTotal').textContent  = data.length;
+        document.getElementById('statHTB').textContent    = data.filter(w => w.platform === 'htb').length;
+        document.getElementById('statCTF').textContent    = data.filter(w => w.platform === 'ctf').length;
+        document.getElementById('statVideos').textContent = data.filter(w => w.video_url).length;
+
+        if (!data.length) {
+          list.innerHTML = '<p class="empty-state">No writeups yet — publish your first one above.</p>';
+          return;
+        }
+
+        list.innerHTML = '<div class="writeup-list">' + data.map(w => `
+          <div class="writeup-row">
+            <div class="writeup-row-info">
+              <div class="writeup-row-title">${esc(w.title)}</div>
+              <div class="writeup-row-meta">${w.date || 'No date'} · ${w.difficulty}${w.video_url ? ' · 🎥 Video' : ''}</div>
+            </div>
+            <span class="badge badge-${w.platform}">${w.platform.toUpperCase()}</span>
+            <span class="badge badge-${w.difficulty}">${cap(w.difficulty)}</span>
+            <button class="btn-sm-danger" onclick="deleteWriteup('${w.id}', '${esc(w.title)}')">Delete</button>
+          </div>
+        `).join('') + '</div>';
+      } catch (e) {
+        list.innerHTML = '<p class="empty-state">Failed to load writeups.</p>';
+      }
+    }
+
+    async function addWriteup() {
+      const title      = document.getElementById('f-title').value.trim();
+      const platform   = document.getElementById('f-platform').value;
+      const difficulty = document.getElementById('f-difficulty').value;
+      const tagsRaw    = document.getElementById('f-tags').value;
+      const tags       = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+      const description = document.getElementById('f-desc').value.trim();
+      const url        = document.getElementById('f-url').value.trim();
+      const video_url  = document.getElementById('f-video').value.trim();
+      const date       = document.getElementById('f-date').value;
+
+      if (!title) return showMsg('addMsg', 'error', 'Title is required.');
+
+      setLoading('publishBtn', true, 'Publishing…');
+      try {
+        const res = await fetch('/api/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'add',
+            password: savedPassword,
+            data: { title, platform, difficulty, tags, description, url, video_url, date: date || null },
+          }),
+        });
+
+        if (res.ok) {
+          showMsg('addMsg', 'success', `"${title}" published successfully!`);
+          ['f-title','f-date','f-tags','f-desc','f-url','f-video'].forEach(id => {
+            document.getElementById(id).value = '';
+          });
+          loadWriteups();
+        } else {
+          showMsg('addMsg', 'error', 'Failed to publish — check Supabase config in Vercel.');
+        }
+      } catch (e) {
+        showMsg('addMsg', 'error', 'Network error. Try again.');
+      }
+      setLoading('publishBtn', false, 'Publish Writeup →');
+    }
+
+    async function deleteWriteup(id, title) {
+      if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+      await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', password: savedPassword, id }),
+      });
+      loadWriteups();
+    }
+
+    function showMsg(container, type, text) {
+      const el = document.getElementById(container);
+      el.innerHTML = `<div class="msg msg-${type}">${text}</div>`;
+      if (type === 'success') setTimeout(() => el.innerHTML = '', 4000);
+    }
+
+    function setLoading(btnId, loading, text) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.textContent = text;
+    }
+
+    function esc(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    }
+    function cap(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    document.getElementById('passwordInput')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') login();
+    });
+  </script>
+
+</body>
+</html>
