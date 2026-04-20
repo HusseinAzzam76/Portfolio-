@@ -2,7 +2,7 @@
 (function () {
   const canvas = document.getElementById('matrix');
   const ctx = canvas.getContext('2d');
-  const ACCENT = '220,30,30';
+  const ACCENT = '0,200,100';
   const COUNT = 70;
   const MAX_DIST = 160;
   let particles = [];
@@ -210,7 +210,7 @@ function initReveal() {
 /* ─── NAV SCROLL STYLE ─── */
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('nav');
-  nav.style.borderBottomColor = window.scrollY > 20 ? 'rgba(220,30,30,.15)' : 'var(--border)';
+  nav.style.borderBottomColor = window.scrollY > 20 ? 'rgba(0,200,100,.15)' : 'var(--border)';
 });
 
 /* ─── FILTER ─── */
