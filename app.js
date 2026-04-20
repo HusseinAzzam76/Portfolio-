@@ -295,9 +295,82 @@ async function loadTHMStats() {
   }
 }
 
+/* ─── GITHUB SVG ─── */
+const GH_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577v-2.165c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.468-2.382 1.235-3.22-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 013.003-.404c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.807 5.624-5.479 5.922.43.372.823 1.102.823 2.222v3.293c0 .322.218.694.825.576C20.565 21.796 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>`;
+
+/* ─── LOAD PROJECTS ─── */
+async function loadProjects() {
+  const grid = document.getElementById('projectsGrid');
+  if (!grid) return;
+  try {
+    if (location.protocol === 'file:') return;
+    const res  = await fetch('/api/projects');
+    const data = await res.json();
+    if (!data.length) { grid.innerHTML = ''; return; }
+    grid.innerHTML = data.map(p => `
+      <div class="project-card" onclick="window.open('${p.github_url||'#'}','_blank')" style="cursor:pointer">
+        <div class="project-top">
+          <span class="project-icon">${p.icon || '🔒'}</span>
+          <div class="project-links">
+            ${p.github_url ? `<a href="${p.github_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${GH_SVG}</a>` : ''}
+          </div>
+        </div>
+        <h3>${p.title}</h3>
+        <p>${p.description || ''}</p>
+        <div class="project-stack">${(p.stack||[]).map(s=>`<span>${s}</span>`).join('')}</div>
+      </div>
+    `).join('');
+  } catch(e) { grid.innerHTML = ''; }
+}
+
+/* ─── LOAD CERTS ─── */
+async function loadCerts() {
+  const certsGrid = document.getElementById('certsGrid');
+  const ctfGrid   = document.getElementById('ctfGrid');
+  const ctfTitle  = document.getElementById('ctfTitle');
+  if (!certsGrid) return;
+  try {
+    if (location.protocol === 'file:') return;
+    const res  = await fetch('/api/certs');
+    const data = await res.json();
+    if (!data.length) return;
+
+    const certs = data.filter(c => c.status !== 'ctf');
+    const ctfs  = data.filter(c => c.status === 'ctf');
+
+    certsGrid.innerHTML = certs.map(c => {
+      const ip  = c.status === 'inprogress';
+      return `
+        <div class="cert-card ${ip ? 'cert-card-inprogress' : ''}">
+          <div class="cert-badge ${ip ? 'cert-badge-inprogress' : ''}">${c.badge_label}</div>
+          <div class="cert-info">
+            <h3>${c.title}</h3>
+            <p>${c.issuer || ''}</p>
+            <span class="cert-year ${ip ? 'cert-inprogress' : ''}">${c.date_label || ''}</span>
+          </div>
+        </div>`;
+    }).join('');
+
+    if (ctfs.length) {
+      ctfTitle.style.display = 'block';
+      ctfGrid.innerHTML = ctfs.map(c => `
+        <div class="cert-card cert-card-ctf">
+          <div class="cert-badge cert-badge-ctf">${c.badge_label}</div>
+          <div class="cert-info">
+            <h3>${c.title}</h3>
+            <p>${c.issuer || ''}</p>
+            <span class="cert-year cert-year-ctf">${c.date_label || ''}</span>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) {}
+}
+
 /* ─── INIT ─── */
 document.addEventListener('DOMContentLoaded', () => {
   loadWriteups();
+  loadProjects();
+  loadCerts();
   initReveal();
   document.getElementById('thmBadge').src =
     `https://tryhackme-badges.s3.amazonaws.com/Alhussein76.png?t=${Date.now()}`;

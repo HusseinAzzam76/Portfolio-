@@ -52,5 +52,35 @@ module.exports = async (req, res) => {
     return res.json({ success: true });
   }
 
+  if (action === 'project_add') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/projects`, {
+      method: 'POST', headers, body: JSON.stringify(data),
+    });
+    const result = await r.json();
+    return res.status(r.ok ? 200 : 400).json(result);
+  }
+
+  if (action === 'project_delete') {
+    await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${id}`, {
+      method: 'DELETE', headers,
+    });
+    return res.json({ success: true });
+  }
+
+  if (action === 'cert_add') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/certs`, {
+      method: 'POST', headers, body: JSON.stringify(data),
+    });
+    const result = await r.json();
+    return res.status(r.ok ? 200 : 400).json(result);
+  }
+
+  if (action === 'cert_delete') {
+    await fetch(`${SUPABASE_URL}/rest/v1/certs?id=eq.${id}`, {
+      method: 'DELETE', headers,
+    });
+    return res.json({ success: true });
+  }
+
   res.status(400).json({ error: 'Unknown action' });
 };

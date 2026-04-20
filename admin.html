@@ -248,6 +248,8 @@
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('writeups')">// Writeups</button>
         <button class="tab-btn" onclick="switchTab('videos')">// Videos</button>
+        <button class="tab-btn" onclick="switchTab('projects')">// Projects</button>
+        <button class="tab-btn" onclick="switchTab('certs')">// Certs</button>
       </div>
 
       <!-- ── WRITEUPS TAB ── -->
@@ -389,6 +391,81 @@
         </div>
 
       </div><!-- end tab-videos -->
+
+      <!-- ── PROJECTS TAB ── -->
+      <div class="tab-panel" id="tab-projects">
+        <div class="card">
+          <div class="card-title">// Add New Project</div>
+          <div id="projectAddMsg"></div>
+          <div class="form-grid">
+            <div>
+              <label>Title *</label>
+              <input type="text" id="p-title" placeholder="e.g. Cowrie SSH Honeypot" />
+            </div>
+            <div>
+              <label>Icon (emoji)</label>
+              <input type="text" id="p-icon" placeholder="🔒" />
+            </div>
+            <div class="form-full">
+              <label>GitHub URL</label>
+              <input type="url" id="p-github" placeholder="https://github.com/..." />
+            </div>
+            <div class="form-full">
+              <label>Description *</label>
+              <textarea id="p-desc" placeholder="What did you build and what did you learn?"></textarea>
+            </div>
+            <div class="form-full">
+              <label>Tech Stack</label>
+              <input type="text" id="p-stack" placeholder="Python, Docker, Linux" />
+              <p class="tags-hint">Separate with commas</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="addProjectBtn" onclick="addProject()">Add Project →</button>
+        </div>
+        <div class="card">
+          <div class="card-title">// Published Projects</div>
+          <div id="projectList"><p class="empty-state">Loading...</p></div>
+        </div>
+      </div><!-- end tab-projects -->
+
+      <!-- ── CERTS TAB ── -->
+      <div class="tab-panel" id="tab-certs">
+        <div class="card">
+          <div class="card-title">// Add New Certificate / Achievement</div>
+          <div id="certAddMsg"></div>
+          <div class="form-grid">
+            <div>
+              <label>Title *</label>
+              <input type="text" id="c-title" placeholder="e.g. Jr Penetration Tester" />
+            </div>
+            <div>
+              <label>Badge Label *</label>
+              <input type="text" id="c-badge" placeholder="THM, HTB, CPTS, CEH..." />
+            </div>
+            <div>
+              <label>Issuer</label>
+              <input type="text" id="c-issuer" placeholder="TryHackMe Learning Path" />
+            </div>
+            <div>
+              <label>Status *</label>
+              <select id="c-status">
+                <option value="completed">Completed</option>
+                <option value="inprogress">In Progress</option>
+                <option value="ctf">CTF Event</option>
+              </select>
+            </div>
+            <div class="form-full">
+              <label>Date / Label</label>
+              <input type="text" id="c-date" placeholder="May 2025 ✓  or  In Progress ⚡  or  Dec 2024" />
+            </div>
+          </div>
+          <button class="btn btn-primary" id="addCertBtn" onclick="addCert()">Add Certificate →</button>
+        </div>
+        <div class="card">
+          <div class="card-title">// Published Certificates</div>
+          <div id="certList"><p class="empty-state">Loading...</p></div>
+        </div>
+      </div><!-- end tab-certs -->
 
     </div>
   </div>
@@ -544,7 +621,9 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + name).classList.add('active');
       event.target.classList.add('active');
-      if (name === 'videos') loadVideos();
+      if (name === 'videos')   loadVideos();
+      if (name === 'projects') loadProjects();
+      if (name === 'certs')    loadCerts();
     }
 
     async function loadVideos() {
@@ -604,6 +683,91 @@
         showMsg('videoAddMsg', 'error', 'Network error. Try again.');
       }
       setLoading('uploadVideoBtn', false, 'Upload Video →');
+    }
+
+    async function loadProjects() {
+      const list = document.getElementById('projectList');
+      try {
+        const res  = await fetch('/api/projects');
+        const data = await res.json();
+        if (!data.length) { list.innerHTML = '<p class="empty-state">No projects yet.</p>'; return; }
+        list.innerHTML = '<div class="writeup-list">' + data.map(p => `
+          <div class="writeup-row">
+            <div class="writeup-row-info">
+              <div class="writeup-row-title">${p.icon || '🔒'} ${esc(p.title)}</div>
+              <div class="writeup-row-meta">${(p.stack||[]).join(', ')}</div>
+            </div>
+            <button class="btn-sm-danger" onclick="deleteProject('${p.id}','${esc(p.title)}')">Delete</button>
+          </div>`).join('') + '</div>';
+      } catch { list.innerHTML = '<p class="empty-state">Failed to load.</p>'; }
+    }
+
+    async function addProject() {
+      const title  = document.getElementById('p-title').value.trim();
+      const icon   = document.getElementById('p-icon').value.trim() || '🔒';
+      const github_url = document.getElementById('p-github').value.trim();
+      const description = document.getElementById('p-desc').value.trim();
+      const stack  = document.getElementById('p-stack').value.split(',').map(s=>s.trim()).filter(Boolean);
+      if (!title) return showMsg('projectAddMsg','error','Title is required.');
+      setLoading('addProjectBtn', true, 'Adding…');
+      const res = await fetch('/api/admin', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'project_add', password:savedPassword, data:{title,icon,github_url,description,stack} }) });
+      if (res.ok) {
+        showMsg('projectAddMsg','success',`"${title}" added!`);
+        ['p-title','p-icon','p-github','p-desc','p-stack'].forEach(id=>document.getElementById(id).value='');
+        loadProjects();
+      } else showMsg('projectAddMsg','error','Failed — check Supabase config.');
+      setLoading('addProjectBtn', false, 'Add Project →');
+    }
+
+    async function deleteProject(id, title) {
+      if (!confirm(`Delete "${title}"?`)) return;
+      await fetch('/api/admin', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'project_delete', password:savedPassword, id }) });
+      loadProjects();
+    }
+
+    async function loadCerts() {
+      const list = document.getElementById('certList');
+      try {
+        const res  = await fetch('/api/certs');
+        const data = await res.json();
+        if (!data.length) { list.innerHTML = '<p class="empty-state">No certs yet.</p>'; return; }
+        list.innerHTML = '<div class="writeup-list">' + data.map(c => `
+          <div class="writeup-row">
+            <div class="writeup-row-info">
+              <div class="writeup-row-title">${esc(c.title)}</div>
+              <div class="writeup-row-meta">${c.issuer||''} · ${c.date_label||''}</div>
+            </div>
+            <span class="badge badge-${c.status==='completed'?'easy':c.status==='ctf'?'ctf':'medium'}">${c.badge_label}</span>
+            <button class="btn-sm-danger" onclick="deleteCert('${c.id}','${esc(c.title)}')">Delete</button>
+          </div>`).join('') + '</div>';
+      } catch { list.innerHTML = '<p class="empty-state">Failed to load.</p>'; }
+    }
+
+    async function addCert() {
+      const title  = document.getElementById('c-title').value.trim();
+      const badge_label = document.getElementById('c-badge').value.trim();
+      const issuer = document.getElementById('c-issuer').value.trim();
+      const status = document.getElementById('c-status').value;
+      const date_label = document.getElementById('c-date').value.trim();
+      if (!title || !badge_label) return showMsg('certAddMsg','error','Title and badge label are required.');
+      setLoading('addCertBtn', true, 'Adding…');
+      const res = await fetch('/api/admin', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'cert_add', password:savedPassword, data:{title,badge_label,issuer,status,date_label} }) });
+      if (res.ok) {
+        showMsg('certAddMsg','success',`"${title}" added!`);
+        ['c-title','c-badge','c-issuer','c-date'].forEach(id=>document.getElementById(id).value='');
+        loadCerts();
+      } else showMsg('certAddMsg','error','Failed — check Supabase config.');
+      setLoading('addCertBtn', false, 'Add Certificate →');
+    }
+
+    async function deleteCert(id, title) {
+      if (!confirm(`Delete "${title}"?`)) return;
+      await fetch('/api/admin', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'cert_delete', password:savedPassword, id }) });
+      loadCerts();
     }
 
     async function deleteVideo(id, title) {
