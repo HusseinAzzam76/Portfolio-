@@ -576,7 +576,9 @@
           });
           loadWriteups();
         } else {
-          showMsg('addMsg', 'error', 'Failed to publish — check Supabase config in Vercel.');
+          let detail = '';
+          try { const j = await res.json(); detail = j.message || j.error || JSON.stringify(j); } catch {}
+          showMsg('addMsg', 'error', `Failed (${res.status}): ${detail || 'unknown error'}`);
         }
       } catch (e) {
         showMsg('addMsg', 'error', 'Network error. Try again.');
@@ -679,7 +681,9 @@
           ['v-title','v-url','v-tags','v-desc','v-date'].forEach(id => document.getElementById(id).value = '');
           loadVideos();
         } else {
-          showMsg('videoAddMsg', 'error', 'Failed to upload — check Supabase config.');
+          let detail = '';
+          try { const j = await res.json(); detail = j.message || j.error || JSON.stringify(j); } catch {}
+          showMsg('videoAddMsg', 'error', `Failed (${res.status}): ${detail || 'unknown error'}`);
         }
       } catch (e) {
         showMsg('videoAddMsg', 'error', 'Network error. Try again.');
@@ -718,7 +722,11 @@
         showMsg('projectAddMsg','success',`"${title}" added!`);
         ['p-title','p-icon','p-github','p-desc','p-stack'].forEach(id=>document.getElementById(id).value='');
         loadProjects();
-      } else showMsg('projectAddMsg','error','Failed — check Supabase config.');
+      } else {
+        let detail = '';
+        try { const j = await res.json(); detail = j.message || j.error || JSON.stringify(j); } catch {}
+        showMsg('projectAddMsg','error', `Failed (${res.status}): ${detail || 'unknown error'}`);
+      }
       setLoading('addProjectBtn', false, 'Add Project →');
     }
 
