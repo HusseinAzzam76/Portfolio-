@@ -1,6 +1,109 @@
 /* ─── RESET & BASE ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ─── ACCESS GATE ─── */
+.access-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #020304;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: opacity .5s ease;
+  opacity: 1;
+}
+.access-gate.gate-hidden { opacity: 0; pointer-events: none; }
+
+.gate-terminal {
+  width: 100%;
+  max-width: 640px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(0,200,100,0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    0 0 80px rgba(0,200,100,0.08),
+    0 8px 40px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+.gate-bar {
+  background: rgba(255,255,255,0.04);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.gate-bar > span {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.gate-bar > span:nth-child(1) { background: #ff5f57; }
+.gate-bar > span:nth-child(2) { background: #ffbd2e; }
+.gate-bar > span:nth-child(3) { background: #28ca41; }
+.gate-title {
+  margin-left: 12px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.03em;
+}
+.gate-body {
+  padding: 22px 24px 40px;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  min-height: 260px;
+  color: #b8ccc8;
+}
+.gate-output > div { white-space: pre-wrap; }
+.gate-output .g-sys { color: #e63333; }
+.gate-output .g-ok  { color: #00cc70; }
+.gate-output .g-dim { color: #5a6a6a; }
+.gate-output .g-cmd { color: #fff; }
+.gate-prompt {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+.gate-prompt-sign {
+  color: #00cc70;
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(0,200,100,0.35);
+}
+.gate-prompt input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.88rem;
+  caret-color: #00cc70;
+}
+.gate-skip {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.3);
+  font-family: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: color .2s;
+  letter-spacing: 0.05em;
+}
+.gate-skip:hover { color: #00cc70; }
+@media (max-width: 560px) {
+  .gate-body { padding: 18px 16px 36px; font-size: 0.8rem; min-height: 240px; }
+  .gate-prompt-sign { font-size: 0.78rem; }
+  .gate-prompt input { font-size: 0.8rem; }
+}
+
 :root {
   --bg:        #020304;
   --bg2:       #040507;

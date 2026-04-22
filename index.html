@@ -10,6 +10,33 @@
 </head>
 <body>
 
+  <!-- ── ACCESS GATE ── -->
+  <div id="accessGate" class="access-gate">
+    <div class="gate-terminal">
+      <div class="gate-bar">
+        <span></span><span></span><span></span>
+        <div class="gate-title">secure-access &mdash; bash</div>
+      </div>
+      <div class="gate-body">
+        <div class="gate-output" id="gateOutput"></div>
+        <div class="gate-prompt" id="gatePromptLine" style="visibility:hidden">
+          <span class="gate-prompt-sign">alhussein@portfolio:~$</span>
+          <input type="text" id="gateInput" autocomplete="off" spellcheck="false" autocapitalize="off" />
+        </div>
+      </div>
+      <button class="gate-skip" onclick="skipGate()" type="button" aria-label="Skip to site">skip &rsaquo;</button>
+    </div>
+  </div>
+  <script>
+    // Hide instantly for returning visitors to avoid flash
+    (function() {
+      if (localStorage.getItem('access_granted') === '1') {
+        var g = document.getElementById('accessGate');
+        if (g) g.style.display = 'none';
+      }
+    })();
+  </script>
+
   <!-- ── NAVIGATION ── -->
   <nav id="nav">
     <div class="nav-inner">
@@ -42,7 +69,7 @@
   <section id="hero">
     <canvas id="matrix"></canvas>
     <div class="hero-content">
-      <p class="hero-pre">Hello, World. I'm</p>
+      <p class="hero-pre"><span class="accent">&gt;</span> whoami</p>
       <h1 class="hero-name">Alhussein Azzam</h1>
       <div class="typewriter-wrapper">
         <span class="hero-role" id="typewriter"></span><span class="cursor">|</span>

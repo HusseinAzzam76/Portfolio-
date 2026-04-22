@@ -1,3 +1,79 @@
+/* ─── ACCESS GATE ─── */
+(function () {
+  const gate = document.getElementById('accessGate');
+  if (!gate) return;
+  if (localStorage.getItem('access_granted') === '1') return;
+
+  const output = document.getElementById('gateOutput');
+  const promptLine = document.getElementById('gatePromptLine');
+  const input = document.getElementById('gateInput');
+
+  const lines = [
+    { text: '[ boot ] initializing secure-access.sh ...', cls: 'g-dim', delay: 350 },
+    { text: '[ boot ] establishing handshake ...',        cls: 'g-dim', delay: 450 },
+    { text: '[ ok   ] connection established.',           cls: 'g-ok',  delay: 450 },
+    { text: '',                                           delay: 120 },
+    { text: 'SYSTEM: unknown visitor detected.',          cls: 'g-sys', delay: 550 },
+    { text: 'SYSTEM: identify yourself to continue.',     cls: 'g-sys', delay: 650 },
+    { text: '',                                           delay: 150 },
+    { text: 'hint: every program starts with this greeting.', cls: 'g-dim', delay: 350 },
+    { text: '',                                           delay: 100 },
+  ];
+
+  function appendLine(text, cls) {
+    const div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.textContent = text || ' ';
+    output.appendChild(div);
+  }
+
+  let i = 0;
+  (function nextLine() {
+    if (i >= lines.length) {
+      promptLine.style.visibility = 'visible';
+      input.focus();
+      return;
+    }
+    const line = lines[i++];
+    appendLine(line.text, line.cls);
+    setTimeout(nextLine, line.delay);
+  })();
+
+  const answers = ['hello world', 'hello, world', 'hello world!', 'hello,world', '"hello world"'];
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const val = input.value.trim().toLowerCase();
+    if (!val) return;
+    appendLine('$ ' + input.value, 'g-cmd');
+    input.value = '';
+    if (answers.includes(val)) {
+      grantAccess();
+    } else {
+      appendLine('access denied. incorrect. try again.', 'g-sys');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && gate.style.display !== 'none') skipGate();
+  });
+
+  function grantAccess() {
+    appendLine('> ACCESS GRANTED. welcome, Alhussein.', 'g-ok');
+    setTimeout(() => {
+      gate.classList.add('gate-hidden');
+      localStorage.setItem('access_granted', '1');
+      setTimeout(() => { gate.style.display = 'none'; }, 550);
+    }, 800);
+  }
+
+  window.skipGate = function () {
+    gate.classList.add('gate-hidden');
+    localStorage.setItem('access_granted', '1');
+    setTimeout(() => { gate.style.display = 'none'; }, 550);
+  };
+})();
+
 /* ─── PARTICLE NETWORK ─── */
 (function () {
   const canvas = document.getElementById('matrix');
