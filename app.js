@@ -6,7 +6,14 @@
 
   const output = document.getElementById('gateOutput');
   const promptLine = document.getElementById('gatePromptLine');
+  const promptSign = promptLine.querySelector('.gate-prompt-sign');
   const input = document.getElementById('gateInput');
+  let stage = 'riddle';
+
+  function sanitizeName(s) {
+    const cleaned = String(s).replace(/[<>&"'`]/g, '').slice(0, 32).trim();
+    return cleaned || 'stranger';
+  }
 
   const lines = [
     { text: '[ boot ] initializing secure-access.sh ...', cls: 'g-dim', delay: 350 },
@@ -43,14 +50,28 @@
 
   input.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
-    const val = input.value.trim().toLowerCase();
+    const rawVal = input.value;
+    const val = rawVal.trim();
     if (!val) return;
-    appendLine('$ ' + input.value, 'g-cmd');
+    appendLine('$ ' + rawVal, 'g-cmd');
     input.value = '';
-    if (answers.includes(val)) {
-      grantAccess();
-    } else {
-      appendLine('access denied. incorrect. try again.', 'g-sys');
+
+    if (stage === 'riddle') {
+      if (answers.includes(val.toLowerCase())) {
+        appendLine('[ ok   ] access granted.', 'g-ok');
+        appendLine(' ', '');
+        appendLine('SYSTEM: what should I call you?', 'g-sys');
+        stage = 'name';
+        promptSign.textContent = 'name:~$';
+      } else {
+        appendLine('access denied. incorrect. try again.', 'g-sys');
+      }
+    } else if (stage === 'name') {
+      const name = sanitizeName(val);
+      localStorage.setItem('visitor_name', name);
+      appendLine(`> welcome, ${name}. enjoy your visit.`, 'g-ok');
+      stage = 'done';
+      setTimeout(closeGate, 900);
     }
   });
 
@@ -58,20 +79,13 @@
     if (e.key === 'Escape' && gate.style.display !== 'none') skipGate();
   });
 
-  function grantAccess() {
-    appendLine('> ACCESS GRANTED. welcome, Alhussein.', 'g-ok');
-    setTimeout(() => {
-      gate.classList.add('gate-hidden');
-      localStorage.setItem('access_granted', '1');
-      setTimeout(() => { gate.style.display = 'none'; }, 550);
-    }, 800);
-  }
-
-  window.skipGate = function () {
+  function closeGate() {
     gate.classList.add('gate-hidden');
     localStorage.setItem('access_granted', '1');
     setTimeout(() => { gate.style.display = 'none'; }, 550);
-  };
+  }
+
+  window.skipGate = function () { closeGate(); };
 })();
 
 /* ─── PARTICLE NETWORK ─── */

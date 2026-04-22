@@ -292,7 +292,7 @@
   function renderVideos(videos) {
     const grid = document.getElementById('videosGrid');
     if (!videos.length) {
-      grid.innerHTML = `<div class="empty-state">No videos yet — check back soon.<br><span>// upload via /admin</span></div>`;
+      grid.innerHTML = `<div class="empty-state">No videos yet. Check back soon.</div>`;
       return;
     }
     grid.innerHTML = videos.map(v => {
