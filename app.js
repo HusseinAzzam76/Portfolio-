@@ -279,16 +279,30 @@ function closeModal() {
 }
 
 /* ─── COUNTER ANIMATION ─── */
+function setStat(key, value) {
+  const el = document.querySelector(`.stat-num[data-stat="${key}"]`);
+  if (!el) return;
+  el.dataset.target = value;
+  if (el.dataset.animated === '1') animateOne(el);
+}
+function animateOne(el) {
+  const target = +el.dataset.target || 0;
+  const start = +el.textContent.replace(/\D/g, '') || 0;
+  if (target === start) { el.textContent = target; return; }
+  const steps = 40;
+  const stepVal = (target - start) / steps;
+  let current = start, i = 0;
+  const t = setInterval(() => {
+    i++;
+    current = Math.round(start + stepVal * i);
+    if (i >= steps) { current = target; clearInterval(t); }
+    el.textContent = current;
+  }, 30);
+}
 function animateCounters() {
   document.querySelectorAll('.stat-num').forEach(el => {
-    const target = +el.dataset.target;
-    let current = 0;
-    const step = Math.ceil(target / 40);
-    const t = setInterval(() => {
-      current = Math.min(current + step, target);
-      el.textContent = current + (target >= 10 ? '+' : '');
-      if (current >= target) clearInterval(t);
-    }, 40);
+    el.dataset.animated = '1';
+    animateOne(el);
   });
 }
 
@@ -462,6 +476,7 @@ async function loadProjects() {
     if (location.protocol === 'file:') return;
     const res  = await fetch('/api/projects');
     const data = await res.json();
+    setStat('projects', Array.isArray(data) ? data.length : 0);
     if (!data.length) { grid.innerHTML = ''; return; }
     grid.innerHTML = data.map(p => {
       const url = safeUrl(p.github_url || '');
@@ -497,10 +512,12 @@ async function loadCerts() {
     if (location.protocol === 'file:') return;
     const res  = await fetch('/api/certs');
     const data = await res.json();
-    if (!data.length) return;
-
-    const certs = data.filter(c => c.status !== 'ctf');
-    const ctfs  = data.filter(c => c.status === 'ctf');
+    const all  = Array.isArray(data) ? data : [];
+    const certs = all.filter(c => c.status !== 'ctf');
+    const ctfs  = all.filter(c => c.status === 'ctf');
+    setStat('certs', certs.length);
+    setStat('ctfs',  ctfs.length);
+    if (!all.length) return;
 
     certsGrid.innerHTML = certs.map(c => {
       const ip  = c.status === 'inprogress';

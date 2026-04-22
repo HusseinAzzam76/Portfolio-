@@ -83,9 +83,9 @@
         <a class="btn btn-outline" href="#contact">Get in Touch</a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">THM Certificates</span></div>
-        <div class="stat"><span class="stat-num" data-target="7">0</span><span class="stat-label">CTF Events</span></div>
-        <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-label">Projects</span></div>
+        <div class="stat"><span class="stat-num" data-stat="certs" data-target="0">0</span><span class="stat-label">Certifications</span></div>
+        <div class="stat"><span class="stat-num" data-stat="ctfs"  data-target="0">0</span><span class="stat-label">CTF Events</span></div>
+        <div class="stat"><span class="stat-num" data-stat="projects" data-target="0">0</span><span class="stat-label">Projects</span></div>
       </div>
     </div>
     <div class="scroll-hint">scroll down ↓</div>
@@ -111,10 +111,9 @@
           </p>
           <p>
             I studied <strong>IT Security</strong> at
-            <a href="https://www.hs-albsig.de" target="_blank" rel="noopener" class="accent-link">Hochschule Albstadt-Sigmaringen</a>,
-            one of the few German universities with a dedicated IT Security program. The degree
-            combined cryptography, secure software engineering, digital forensics, and network
-            security with hands-on lab work in real attack and defense scenarios.
+            <a href="https://www.hs-albsig.de" target="_blank" rel="noopener" class="accent-link">Hochschule Albstadt-Sigmaringen</a>.
+            The degree combined cryptography, secure software engineering, digital forensics,
+            and network security with hands-on lab work in real attack and defense scenarios.
           </p>
           <p>
             Outside of formal study, I train continuously on
@@ -444,16 +443,6 @@
             <span>CTFtime Team</span>
           </a>
         </div>
-        <form class="contact-form" id="contactForm" onsubmit="handleForm(event)">
-          <input type="text" name="name" placeholder="Your Name" required maxlength="120" />
-          <input type="email" name="email" placeholder="Your Email" required maxlength="160" />
-          <input type="text" name="subject" placeholder="Subject" maxlength="160" />
-          <textarea name="message" placeholder="Your message..." rows="5" required maxlength="5000"></textarea>
-          <input type="text" name="website" tabindex="-1" autocomplete="off"
-                 style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
-          <button type="submit" class="btn btn-primary" id="contactSubmitBtn">Send Message</button>
-          <p class="form-note" id="formNote"></p>
-        </form>
       </div>
     </div>
   </section>
