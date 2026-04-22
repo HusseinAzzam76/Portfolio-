@@ -2,8 +2,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:        #0a0e17;
-  --bg2:       #0f1524;
+  --bg:        #050710;
+  --bg2:       #080c18;
   --card:      rgba(255,255,255,0.02);
   --border:    rgba(148,163,184,0.08);
   --border-hover: rgba(34,211,238,0.45);
@@ -32,10 +32,10 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   background-image:
-    radial-gradient(ellipse at top, rgba(34,211,238,0.06) 0%, transparent 55%),
-    radial-gradient(ellipse at bottom right, rgba(167,139,250,0.05) 0%, transparent 60%),
-    linear-gradient(rgba(148,163,184,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148,163,184,0.035) 1px, transparent 1px);
+    radial-gradient(ellipse at top, rgba(34,211,238,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(167,139,250,0.03) 0%, transparent 60%),
+    linear-gradient(rgba(148,163,184,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px);
   background-size: auto, auto, 48px 48px, 48px 48px;
   background-attachment: fixed;
 }
