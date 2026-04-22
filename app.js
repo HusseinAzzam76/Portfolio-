@@ -308,18 +308,27 @@ function toggleMenu() {
 }
 
 /* ─── CONTACT FORM ─── */
-async function handleForm(e) {
-  e.preventDefault();
-  const form = e.target;
+function handleForm(e) { e.preventDefault(); submitContactForm(e.target); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('contactForm');
+  if (!form) { console.warn('[contact] form not found'); return; }
+  form.addEventListener('submit', (e) => { e.preventDefault(); submitContactForm(form); });
+  console.log('[contact] listener attached');
+});
+
+async function submitContactForm(form) {
   const note = document.getElementById('formNote');
   const btn  = document.getElementById('contactSubmitBtn');
   const data = Object.fromEntries(new FormData(form).entries());
+
+  console.log('[contact] submitting', { name: data.name, email: data.email, hasMsg: !!data.message });
 
   btn.disabled = true;
   const originalBtnText = btn.textContent;
   btn.textContent = 'Sending…';
   note.style.color = '';
-  note.textContent = '';
+  note.textContent = 'Sending…';
 
   try {
     const res = await fetch('/api/contact', {
@@ -327,7 +336,11 @@ async function handleForm(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    const json = await res.json().catch(() => ({}));
+    console.log('[contact] response status', res.status);
+    const raw = await res.text();
+    console.log('[contact] response body', raw);
+    let json = {};
+    try { json = JSON.parse(raw); } catch {}
 
     if (res.ok && json.success) {
       note.style.color = 'var(--accent)';
@@ -335,15 +348,16 @@ async function handleForm(e) {
       form.reset();
     } else {
       note.style.color = 'var(--accent3)';
-      note.textContent = json.error || 'Failed to send. Try again later.';
+      note.textContent = (json.error || 'Failed.') + ' [HTTP ' + res.status + ']';
     }
-  } catch {
+  } catch (err) {
+    console.error('[contact] fetch failed', err);
     note.style.color = 'var(--accent3)';
-    note.textContent = 'Network error. Please try again.';
+    note.textContent = 'Network error: ' + err.message;
   } finally {
     btn.disabled = false;
     btn.textContent = originalBtnText;
-    setTimeout(() => { note.textContent = ''; note.style.color = ''; }, 6000);
+    setTimeout(() => { note.textContent = ''; note.style.color = ''; }, 10000);
   }
 }
 
