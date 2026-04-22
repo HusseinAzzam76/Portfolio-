@@ -174,13 +174,10 @@ const PLATFORM_LABELS = { htb: 'HackTheBox', thm: 'TryHackMe', ctf: 'CTF', real:
 
 function renderWriteups(writeups) {
   const grid  = document.getElementById('writeupsGrid');
-  const empty = document.getElementById('writeupsEmpty');
-
   if (!writeups || !writeups.length) {
-    empty.classList.remove('hidden');
+    grid.innerHTML = '';
     return;
   }
-  empty.classList.add('hidden');
 
   grid.innerHTML = writeups.map(w => {
     const ytId      = getYouTubeId(w.video_url);
