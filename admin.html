@@ -759,7 +759,11 @@
         showMsg('certAddMsg','success',`"${title}" added!`);
         ['c-title','c-badge','c-issuer','c-date'].forEach(id=>document.getElementById(id).value='');
         loadCerts();
-      } else showMsg('certAddMsg','error','Failed — check Supabase config.');
+      } else {
+        let detail = '';
+        try { const j = await res.json(); detail = j.message || j.error || JSON.stringify(j); } catch {}
+        showMsg('certAddMsg','error',`Failed (${res.status}): ${detail || 'unknown error'}`);
+      }
       setLoading('addCertBtn', false, 'Add Certificate →');
     }
 
