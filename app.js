@@ -308,12 +308,43 @@ function toggleMenu() {
 }
 
 /* ─── CONTACT FORM ─── */
-function handleForm(e) {
+async function handleForm(e) {
   e.preventDefault();
+  const form = e.target;
   const note = document.getElementById('formNote');
-  note.textContent = '✓ Message sent! I\'ll get back to you soon.';
-  e.target.reset();
-  setTimeout(() => note.textContent = '', 5000);
+  const btn  = document.getElementById('contactSubmitBtn');
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  btn.disabled = true;
+  const originalBtnText = btn.textContent;
+  btn.textContent = 'Sending…';
+  note.style.color = '';
+  note.textContent = '';
+
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json().catch(() => ({}));
+
+    if (res.ok && json.success) {
+      note.style.color = 'var(--accent)';
+      note.textContent = '✓ Message sent. I\'ll get back to you soon.';
+      form.reset();
+    } else {
+      note.style.color = 'var(--accent3)';
+      note.textContent = json.error || 'Failed to send. Try again later.';
+    }
+  } catch {
+    note.style.color = 'var(--accent3)';
+    note.textContent = 'Network error. Please try again.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalBtnText;
+    setTimeout(() => { note.textContent = ''; note.style.color = ''; }, 6000);
+  }
 }
 
 /* ─── TRYHACKME LIVE STATS ─── */

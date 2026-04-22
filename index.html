@@ -453,12 +453,14 @@
             <span>CTFtime Team</span>
           </a>
         </div>
-        <form class="contact-form" onsubmit="handleForm(event)">
-          <input type="text" placeholder="Your Name" required />
-          <input type="email" placeholder="Your Email" required />
-          <input type="text" placeholder="Subject" />
-          <textarea placeholder="Your message..." rows="5" required></textarea>
-          <button type="submit" class="btn btn-primary">Send Message</button>
+        <form class="contact-form" id="contactForm" onsubmit="handleForm(event)">
+          <input type="text" name="name" placeholder="Your Name" required maxlength="120" />
+          <input type="email" name="email" placeholder="Your Email" required maxlength="160" />
+          <input type="text" name="subject" placeholder="Subject" maxlength="160" />
+          <textarea name="message" placeholder="Your message..." rows="5" required maxlength="5000"></textarea>
+          <input type="text" name="website" tabindex="-1" autocomplete="off"
+                 style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
+          <button type="submit" class="btn btn-primary" id="contactSubmitBtn">Send Message</button>
           <p class="form-note" id="formNote"></p>
         </form>
       </div>
