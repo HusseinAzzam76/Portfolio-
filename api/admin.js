@@ -1,15 +1,31 @@
-module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+const crypto = require('crypto');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
+function timingSafeCompare(a, b) {
+  const aBuf = Buffer.from(String(a || ''));
+  const bBuf = Buffer.from(String(b || ''));
+  const len = Math.max(aBuf.length, bBuf.length, 1);
+  const aPad = Buffer.alloc(len); aBuf.copy(aPad);
+  const bPad = Buffer.alloc(len); bBuf.copy(bPad);
+  return crypto.timingSafeEqual(aPad, bPad) && aBuf.length === bBuf.length;
+}
+
+module.exports = async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_PASSWORD } = process.env;
-  const { action, password, data, id } = req.body;
+  const origin = req.headers.origin || req.headers.referer || '';
+  const host = req.headers.host || '';
+  if (origin && host && !origin.includes(host)) {
+    return res.status(403).json({ error: 'Forbidden origin' });
+  }
 
-  if (!password || password !== ADMIN_PASSWORD) {
+  const { SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_PASSWORD } = process.env;
+  if (!ADMIN_PASSWORD) return res.status(500).json({ error: 'Server misconfigured' });
+
+  const { action, password, data, id } = req.body || {};
+
+  if (!timingSafeCompare(password, ADMIN_PASSWORD)) {
+    await new Promise(r => setTimeout(r, 800));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

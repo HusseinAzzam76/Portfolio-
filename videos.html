@@ -257,19 +257,26 @@
 <script>
   const CAT_LABELS = { ctf:'CTF', htb:'HackTheBox', thm:'TryHackMe', pentest:'Pentest', tutorial:'Tutorial' };
 
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
   function getYouTubeId(url) {
     if (!url) return null;
-    const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    const m = String(url).match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
     return m ? m[1] : null;
   }
 
-  function openModal(url) {
-    const id = getYouTubeId(url);
-    if (!id) return;
-    document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+  function openModalById(id) {
+    if (!id || !/^[A-Za-z0-9_-]{5,20}$/.test(id)) return;
+    document.getElementById('modalIframe').src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
     document.getElementById('videoModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+
+  function openModal(url) { openModalById(getYouTubeId(url)); }
 
   function closeModal() {
     document.getElementById('videoModal').classList.remove('open');
@@ -289,14 +296,15 @@
       return;
     }
     grid.innerHTML = videos.map(v => {
-      const ytId = getYouTubeId(v.youtube_url);
-      const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+      const ytId  = getYouTubeId(v.youtube_url);
+      const ytIdE = esc(ytId || '');
+      const thumb = ytId ? `https://img.youtube.com/vi/${ytIdE}/mqdefault.jpg` : '';
       const tags  = Array.isArray(v.tags) ? v.tags : [];
-      const cat   = v.category || 'tutorial';
+      const cat   = (v.category || 'tutorial').toString().replace(/[^a-z0-9_-]/gi, '');
       return `
         <div class="video-card" data-category="${cat}">
-          <div class="video-thumb" onclick="openModal('${v.youtube_url}')">
-            ${thumb ? `<img src="${thumb}" alt="${v.title}" loading="lazy" />` : ''}
+          <div class="video-thumb" data-yt="${ytIdE}">
+            ${thumb ? `<img src="${thumb}" alt="${esc(v.title)}" loading="lazy" />` : ''}
             <div class="video-thumb-overlay">
               <div class="play-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -305,16 +313,19 @@
           </div>
           <div class="video-body">
             <div class="video-meta">
-              <span class="video-cat cat-${cat}">${CAT_LABELS[cat] || cat}</span>
-              ${v.date ? `<span class="video-date">${v.date}</span>` : ''}
+              <span class="video-cat cat-${cat}">${esc(CAT_LABELS[cat] || cat)}</span>
+              ${v.date ? `<span class="video-date">${esc(v.date)}</span>` : ''}
             </div>
-            <h3 class="video-title">${v.title}</h3>
-            ${v.description ? `<p class="video-desc">${v.description}</p>` : ''}
-            ${tags.length ? `<div class="video-tags">${tags.map(t=>`<span>#${t}</span>`).join('')}</div>` : ''}
+            <h3 class="video-title">${esc(v.title)}</h3>
+            ${v.description ? `<p class="video-desc">${esc(v.description)}</p>` : ''}
+            ${tags.length ? `<div class="video-tags">${tags.map(t=>`<span>#${esc(t)}</span>`).join('')}</div>` : ''}
           </div>
         </div>
       `;
     }).join('');
+    grid.querySelectorAll('.video-thumb[data-yt]').forEach(el => {
+      el.addEventListener('click', () => openModalById(el.dataset.yt));
+    });
   }
 
   async function loadVideos() {

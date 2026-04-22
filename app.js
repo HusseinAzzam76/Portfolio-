@@ -169,6 +169,19 @@ function getYouTubeId(url) {
   return m ? m[1] : null;
 }
 
+/* ─── SECURITY: HTML ESCAPE HELPERS ─── */
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function escAttr(s) { return esc(s); }
+function safeUrl(u) {
+  const s = String(u || '').trim();
+  if (/^(https?:|mailto:|#|\/)/i.test(s)) return s;
+  return '#';
+}
+
 /* ─── RENDER WRITEUPS ─── */
 const PLATFORM_LABELS = { htb: 'HackTheBox', thm: 'TryHackMe', ctf: 'CTF', real: 'Real World' };
 
@@ -182,33 +195,41 @@ function renderWriteups(writeups) {
   grid.innerHTML = writeups.map(w => {
     const ytId      = getYouTubeId(w.video_url);
     const thumb     = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
-    const diffLabel = w.difficulty.charAt(0).toUpperCase() + w.difficulty.slice(1);
+    const diffRaw   = String(w.difficulty || '');
+    const diffLabel = diffRaw.charAt(0).toUpperCase() + diffRaw.slice(1);
     const platLabel = PLATFORM_LABELS[w.platform] || w.platform;
     const tags      = Array.isArray(w.tags) ? w.tags : [];
+    const ytIdEsc   = esc(ytId || '');
+    const platCls   = esc(w.platform || '').replace(/[^a-z0-9_-]/gi, '');
+    const diffCls   = esc(diffRaw).replace(/[^a-z0-9_-]/gi, '');
 
     return `
-      <article class="card" data-category="${w.platform}">
+      <article class="card" data-category="${platCls}">
         ${thumb ? `
-        <div class="card-thumb" style="background-image:url('${thumb}')" onclick="openVideoModal('${w.video_url}')">
+        <div class="card-thumb" style="background-image:url('https://img.youtube.com/vi/${ytIdEsc}/mqdefault.jpg')" data-yt="${ytIdEsc}">
           <div class="card-play">▶</div>
         </div>` : ''}
         <div class="card-header">
-          <span class="badge badge-${w.platform}">${platLabel}</span>
-          <span class="badge badge-${w.difficulty}">${diffLabel}</span>
-          ${w.date ? `<span class="card-date">${w.date}</span>` : ''}
+          <span class="badge badge-${platCls}">${esc(platLabel)}</span>
+          <span class="badge badge-${diffCls}">${esc(diffLabel)}</span>
+          ${w.date ? `<span class="card-date">${esc(w.date)}</span>` : ''}
         </div>
-        <h3 class="card-title">${w.title}</h3>
-        <p class="card-desc">${w.description || ''}</p>
-        <div class="card-tags">${tags.map(t => `<span>#${t}</span>`).join('')}</div>
+        <h3 class="card-title">${esc(w.title)}</h3>
+        <p class="card-desc">${esc(w.description || '')}</p>
+        <div class="card-tags">${tags.map(t => `<span>#${esc(t)}</span>`).join('')}</div>
         <div class="card-actions">
           ${w.url
-            ? `<a class="card-link" href="${w.url}" target="_blank" rel="noopener">Read Writeup →</a>`
+            ? `<a class="card-link" href="${esc(safeUrl(w.url))}" target="_blank" rel="noopener noreferrer">Read Writeup →</a>`
             : `<span class="card-link-dim">Coming soon…</span>`}
-          ${ytId ? `<button class="card-video-btn" onclick="openVideoModal('${w.video_url}')">▶ Watch</button>` : ''}
+          ${ytId ? `<button class="card-video-btn" data-yt="${ytIdEsc}">▶ Watch</button>` : ''}
         </div>
       </article>
     `;
   }).join('');
+
+  grid.querySelectorAll('[data-yt]').forEach(el => {
+    el.addEventListener('click', () => openVideoModalById(el.dataset.yt));
+  });
 }
 
 async function loadWriteups() {
@@ -228,8 +249,11 @@ async function loadWriteups() {
 /* ─── VIDEO MODAL ─── */
 function openVideoModal(url) {
   const id = getYouTubeId(url);
-  if (!id) return;
-  document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+  openVideoModalById(id);
+}
+function openVideoModalById(id) {
+  if (!id || !/^[A-Za-z0-9_-]{5,20}$/.test(id)) return;
+  document.getElementById('modalIframe').src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
   document.getElementById('videoModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -425,19 +449,27 @@ async function loadProjects() {
     const res  = await fetch('/api/projects');
     const data = await res.json();
     if (!data.length) { grid.innerHTML = ''; return; }
-    grid.innerHTML = data.map(p => `
-      <div class="project-card" onclick="window.open('${p.github_url||'#'}','_blank')" style="cursor:pointer">
+    grid.innerHTML = data.map(p => {
+      const url = safeUrl(p.github_url || '');
+      return `
+      <div class="project-card" data-url="${esc(url)}" style="cursor:pointer">
         <div class="project-top">
-          <span class="project-icon">${p.icon || '🔒'}</span>
+          <span class="project-icon">${esc(p.icon || '🔒')}</span>
           <div class="project-links">
-            ${p.github_url ? `<a href="${p.github_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${GH_SVG}</a>` : ''}
+            ${p.github_url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${GH_SVG}</a>` : ''}
           </div>
         </div>
-        <h3>${p.title}</h3>
-        <p>${p.description || ''}</p>
-        <div class="project-stack">${(p.stack||[]).map(s=>`<span>${s}</span>`).join('')}</div>
-      </div>
-    `).join('');
+        <h3>${esc(p.title)}</h3>
+        <p>${esc(p.description || '')}</p>
+        <div class="project-stack">${(p.stack||[]).map(s=>`<span>${esc(s)}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.project-card[data-url]').forEach(el => {
+      el.addEventListener('click', () => {
+        const u = el.dataset.url;
+        if (u && u !== '#') window.open(u, '_blank', 'noopener,noreferrer');
+      });
+    });
   } catch(e) { grid.innerHTML = ''; }
 }
 
@@ -460,11 +492,11 @@ async function loadCerts() {
       const ip  = c.status === 'inprogress';
       return `
         <div class="cert-card ${ip ? 'cert-card-inprogress' : ''}">
-          <div class="cert-badge ${ip ? 'cert-badge-inprogress' : ''}">${c.badge_label}</div>
+          <div class="cert-badge ${ip ? 'cert-badge-inprogress' : ''}">${esc(c.badge_label)}</div>
           <div class="cert-info">
-            <h3>${c.title}</h3>
-            <p>${c.issuer || ''}</p>
-            <span class="cert-year ${ip ? 'cert-inprogress' : ''}">${c.date_label || ''}</span>
+            <h3>${esc(c.title)}</h3>
+            <p>${esc(c.issuer || '')}</p>
+            <span class="cert-year ${ip ? 'cert-inprogress' : ''}">${esc(c.date_label || '')}</span>
           </div>
         </div>`;
     }).join('');
@@ -473,11 +505,11 @@ async function loadCerts() {
       ctfTitle.style.display = 'block';
       ctfGrid.innerHTML = ctfs.map(c => `
         <div class="cert-card cert-card-ctf">
-          <div class="cert-badge cert-badge-ctf">${c.badge_label}</div>
+          <div class="cert-badge cert-badge-ctf">${esc(c.badge_label)}</div>
           <div class="cert-info">
-            <h3>${c.title}</h3>
-            <p>${c.issuer || ''}</p>
-            <span class="cert-year cert-year-ctf">${c.date_label || ''}</span>
+            <h3>${esc(c.title)}</h3>
+            <p>${esc(c.issuer || '')}</p>
+            <span class="cert-year cert-year-ctf">${esc(c.date_label || '')}</span>
           </div>
         </div>`).join('');
     }
