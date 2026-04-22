@@ -492,29 +492,50 @@ a { color: inherit; text-decoration: none; }
   backdrop-filter: blur(10px);
 }
 .terminal-bar {
-  background: rgba(255,255,255,0.04);
-  padding: 10px 16px;
+  background: rgba(20,25,30,0.85);
+  padding: 8px 14px;
   display: flex;
+  align-items: center;
   gap: 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(100,200,255,0.12);
 }
 .terminal-bar span {
-  width: 12px; height: 12px;
+  width: 11px; height: 11px;
   border-radius: 50%;
 }
-.terminal-bar span:nth-child(1){ background:#ff5f57; }
-.terminal-bar span:nth-child(2){ background:#ffbd2e; }
-.terminal-bar span:nth-child(3){ background:#28ca41; }
+.terminal-bar span:nth-child(1){ background:#e35454; }
+.terminal-bar span:nth-child(2){ background:#e3b554; }
+.terminal-bar span:nth-child(3){ background:#4fc98c; }
+.terminal-title {
+  margin-left: 14px;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: rgba(255,255,255,0.55);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.02em;
+}
+.terminal-logo {
+  color: #5bc0ea;
+  filter: drop-shadow(0 0 4px rgba(91,192,234,0.5));
+}
 .terminal-body {
   padding: 20px;
   font-family: var(--font-mono);
   font-size: .8rem;
   line-height: 1.9;
   white-space: pre;
+  background:
+    linear-gradient(rgba(0,20,40,0.15), rgba(0,20,40,0.15)),
+    rgba(0,0,0,0.3);
 }
 .t-prompt { color: var(--accent); text-shadow: 0 0 8px rgba(0,200,100,0.4); }
 .t-cmd    { color: #fff; }
 .t-key    { color: var(--accent3); text-shadow: 0 0 8px rgba(220,50,50,0.4); }
+.t-box    { color: #5bc0ea; text-shadow: 0 0 6px rgba(91,192,234,0.3); }
+.t-user   { color: #4fc98c; text-shadow: 0 0 6px rgba(79,201,140,0.35); font-weight: 500; }
+.t-path   { color: #e9b44c; text-shadow: 0 0 6px rgba(233,180,76,0.3); }
 
 /* ─── TRYHACKME STATS ─── */
 .thm-wrapper {

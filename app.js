@@ -155,7 +155,6 @@
 (function () {
   const phrases = [
     'Penetration Tester',
-    'Ethical Hacker',
     'CTF Player',
     'Bug Hunter',
     'Red Teamer',
