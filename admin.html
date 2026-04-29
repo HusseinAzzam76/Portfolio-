@@ -252,6 +252,7 @@
         <button class="tab-btn" onclick="switchTab('videos')">// Videos</button>
         <button class="tab-btn" onclick="switchTab('projects')">// Projects</button>
         <button class="tab-btn" onclick="switchTab('certs')">// Certs</button>
+        <button class="tab-btn" onclick="switchTab('profile')">// Profile</button>
       </div>
 
       <!-- ── WRITEUPS TAB ── -->
@@ -469,6 +470,93 @@
         </div>
       </div><!-- end tab-certs -->
 
+      <!-- ── PROFILE TAB ── -->
+      <div class="tab-panel" id="tab-profile">
+
+        <div class="card">
+          <div class="card-title">// Hero Section</div>
+          <div id="profileMsg"></div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label>Name</label>
+              <input type="text" id="s-hero-name" placeholder="Alhussein Azzam" />
+            </div>
+            <div class="form-full">
+              <label>Tagline (one line per row — rendered as separate lines)</label>
+              <textarea id="s-hero-tagline" rows="3" placeholder="Pentester &amp; CTF player.&#10;I break things to understand how to build them better."></textarea>
+            </div>
+            <div class="form-full">
+              <label>Typewriter Phrases (one per line)</label>
+              <textarea id="s-hero-typewriter" rows="4" placeholder="Penetration Tester&#10;CTF Player&#10;Bug Hunter&#10;Red Teamer"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">// About Section</div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label>Intro Role (under your name in About)</label>
+              <input type="text" id="s-about-role" placeholder="Penetration Tester" />
+            </div>
+            <div class="form-full">
+              <label>Paragraphs (separate paragraphs with a blank line — supports **bold** and [link text](url))</label>
+              <textarea id="s-about-paragraphs" rows="14" placeholder="I'm a **penetration tester** focused on offensive security..."></textarea>
+            </div>
+            <div class="form-full">
+              <label>Meta Lines (4 items — "label: value" per line)</label>
+              <textarea id="s-about-meta" rows="5" placeholder="Education: B.Sc. IT Security at HS Albstadt-Sigmaringen&#10;Focus: Web · Network · Active Directory&#10;Email: you@example.com&#10;Status: Open to opportunities"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">// Terminal Card</div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label>about.txt content ("Key: Value" per line)</label>
+              <textarea id="s-term-about" rows="8" placeholder="Name: Alhussein Azzam&#10;Role: Ethical Hacker&#10;Education: B.Sc. IT Security&#10;School: HS Albstadt-Sigmaringen&#10;Focus: Web | Network | AD&#10;Languages: Python, Bash&#10;OS: Kali Linux, macOS"></textarea>
+            </div>
+            <div class="form-full">
+              <label>interests.txt content ("Key: Value" per line)</label>
+              <textarea id="s-term-interests" rows="6" placeholder="CTF: ✓ Active player&#10;Platforms: HackTheBox, TryHackMe&#10;Cert: ⚡ CPTS (in progress)&#10;Research: ✓ Ongoing"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">// Contact Links</div>
+          <div class="form-grid">
+            <div class="form-full">
+              <label>Email</label>
+              <input type="email" id="s-contact-email" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label>GitHub URL</label>
+              <input type="url" id="s-contact-github" placeholder="https://github.com/..." />
+            </div>
+            <div>
+              <label>LinkedIn URL</label>
+              <input type="url" id="s-contact-linkedin" placeholder="https://linkedin.com/in/..." />
+            </div>
+            <div>
+              <label>HackTheBox URL</label>
+              <input type="url" id="s-contact-htb" placeholder="https://app.hackthebox.com/users/..." />
+            </div>
+            <div>
+              <label>TryHackMe URL</label>
+              <input type="url" id="s-contact-thm" placeholder="https://tryhackme.com/p/..." />
+            </div>
+            <div class="form-full">
+              <label>CTFtime URL</label>
+              <input type="url" id="s-contact-ctftime" placeholder="https://ctftime.org/team/..." />
+            </div>
+          </div>
+          <button class="btn btn-primary" id="saveProfileBtn" onclick="saveSite()">Save Profile →</button>
+        </div>
+
+      </div><!-- end tab-profile -->
+
     </div>
   </div>
 
@@ -628,6 +716,109 @@
       if (name === 'videos')   loadVideos();
       if (name === 'projects') loadProjects();
       if (name === 'certs')    loadCerts();
+      if (name === 'profile')  loadSite();
+    }
+
+    /* ── PROFILE / SITE CONTENT ── */
+    function metaToText(meta) {
+      if (!Array.isArray(meta)) return '';
+      return meta.map(m => `${m.label}: ${m.value}`).join('\n');
+    }
+    function textToMeta(text) {
+      return String(text || '').split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+        const idx = line.indexOf(':');
+        if (idx === -1) return { label: line, value: '' };
+        return { label: line.slice(0, idx).trim(), value: line.slice(idx + 1).trim() };
+      });
+    }
+    function paragraphsToText(paragraphs) {
+      return Array.isArray(paragraphs) ? paragraphs.join('\n\n') : '';
+    }
+    function textToParagraphs(text) {
+      return String(text || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+    }
+    function arrToText(arr) { return Array.isArray(arr) ? arr.join('\n') : ''; }
+    function textToArr(text)  { return String(text || '').split('\n').map(l => l.trim()).filter(Boolean); }
+
+    let siteLoaded = false;
+    async function loadSite() {
+      if (siteLoaded) return;
+      try {
+        const res = await fetch('/api/site');
+        const d = await res.json();
+        const hero = d.hero || {};
+        const about = d.about || {};
+        const term = d.terminal || {};
+        const contact = d.contact || {};
+
+        document.getElementById('s-hero-name').value       = hero.name || '';
+        document.getElementById('s-hero-tagline').value    = arrToText(hero.tagline);
+        document.getElementById('s-hero-typewriter').value = arrToText(hero.typewriter_phrases);
+
+        document.getElementById('s-about-role').value       = about.intro_role || '';
+        document.getElementById('s-about-paragraphs').value = paragraphsToText(about.paragraphs);
+        document.getElementById('s-about-meta').value       = metaToText(about.meta);
+
+        document.getElementById('s-term-about').value     = metaToText(term.about_txt);
+        document.getElementById('s-term-interests').value = metaToText(term.interests_txt);
+
+        document.getElementById('s-contact-email').value    = contact.email || '';
+        document.getElementById('s-contact-github').value   = contact.github || '';
+        document.getElementById('s-contact-linkedin').value = contact.linkedin || '';
+        document.getElementById('s-contact-htb').value      = contact.hackthebox || '';
+        document.getElementById('s-contact-thm').value      = contact.tryhackme || '';
+        document.getElementById('s-contact-ctftime').value  = contact.ctftime || '';
+
+        siteLoaded = true;
+      } catch (e) {
+        showMsg('profileMsg', 'error', 'Failed to load profile.');
+      }
+    }
+
+    async function saveSite() {
+      const data = {
+        hero: {
+          name: document.getElementById('s-hero-name').value.trim(),
+          tagline: textToArr(document.getElementById('s-hero-tagline').value),
+          typewriter_phrases: textToArr(document.getElementById('s-hero-typewriter').value),
+        },
+        about: {
+          intro_role: document.getElementById('s-about-role').value.trim(),
+          paragraphs: textToParagraphs(document.getElementById('s-about-paragraphs').value),
+          meta: textToMeta(document.getElementById('s-about-meta').value),
+        },
+        terminal: {
+          about_txt: textToMeta(document.getElementById('s-term-about').value),
+          interests_txt: textToMeta(document.getElementById('s-term-interests').value),
+        },
+        contact: {
+          email:      document.getElementById('s-contact-email').value.trim(),
+          github:     document.getElementById('s-contact-github').value.trim(),
+          linkedin:   document.getElementById('s-contact-linkedin').value.trim(),
+          hackthebox: document.getElementById('s-contact-htb').value.trim(),
+          tryhackme:  document.getElementById('s-contact-thm').value.trim(),
+          ctftime:    document.getElementById('s-contact-ctftime').value.trim(),
+        },
+      };
+
+      setLoading('saveProfileBtn', true, 'Saving…');
+      try {
+        const res = await fetch('/api/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'site_update', password: savedPassword, data }),
+        });
+        if (res.ok) {
+          showMsg('profileMsg', 'success', 'Profile saved. Your site is updated.');
+        } else {
+          let detail = '';
+          try { const j = await res.json(); detail = j.message || j.error || JSON.stringify(j); } catch {}
+          showMsg('profileMsg', 'error', `Failed (${res.status}): ${detail || 'unknown error'}`);
+        }
+      } catch (e) {
+        showMsg('profileMsg', 'error', 'Network error. Try again.');
+      }
+      setLoading('saveProfileBtn', false, 'Save Profile →');
     }
 
     async function loadVideos() {

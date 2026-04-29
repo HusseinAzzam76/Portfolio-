@@ -159,6 +159,11 @@
     'Bug Hunter',
     'Red Teamer',
   ];
+  window.setTypewriterPhrases = function (arr) {
+    if (!Array.isArray(arr) || !arr.length) return;
+    phrases.length = 0;
+    arr.forEach(p => phrases.push(String(p)));
+  };
   const el = document.getElementById('typewriter');
   let pi = 0, ci = 0, deleting = false;
 
@@ -193,6 +198,116 @@ function safeUrl(u) {
   const s = String(u || '').trim();
   if (/^(https?:|mailto:|#|\/)/i.test(s)) return s;
   return '#';
+}
+
+/* ─── INLINE MARKDOWN (bold + links only, escape-first) ─── */
+function mdInline(text) {
+  let s = esc(text);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, t, u) => {
+    const safe = safeUrl(u);
+    return `<a href="${escAttr(safe)}" target="_blank" rel="noopener noreferrer" class="accent-link">${t}</a>`;
+  });
+  return s;
+}
+
+/* ─── LOAD SITE CONTENT (admin-editable) ─── */
+async function loadSite() {
+  if (location.protocol === 'file:') return;
+  let d;
+  try {
+    const res = await fetch('/api/site');
+    if (!res.ok) return;
+    d = await res.json();
+  } catch (e) { return; }
+  if (!d || typeof d !== 'object') return;
+
+  const hero    = d.hero    || {};
+  const about   = d.about   || {};
+  const term    = d.terminal || {};
+  const contact = d.contact || {};
+
+  if (hero.name) {
+    document.querySelectorAll('.hero-name, .about-intro-name').forEach(el => { el.textContent = hero.name; });
+    if (about.intro_role || hero.name) {
+      document.title = `${hero.name} — ${about.intro_role || 'Portfolio'}`;
+    }
+    const footer = document.querySelector('footer p');
+    if (footer) footer.textContent = `© ${new Date().getFullYear()} ${hero.name}. All rights reserved.`;
+  }
+  if (Array.isArray(hero.tagline) && hero.tagline.length) {
+    const sub = document.querySelector('.hero-sub');
+    if (sub) sub.innerHTML = hero.tagline.map(esc).join('<br />');
+  }
+  if (Array.isArray(hero.typewriter_phrases) && hero.typewriter_phrases.length && window.setTypewriterPhrases) {
+    window.setTypewriterPhrases(hero.typewriter_phrases);
+  }
+
+  if (about.intro_role) {
+    const role = document.querySelector('.about-intro-role');
+    if (role) role.textContent = about.intro_role;
+  }
+  if (Array.isArray(about.paragraphs) && about.paragraphs.length) {
+    const text = document.querySelector('.about-text');
+    const meta = text?.querySelector('.about-meta');
+    if (text) {
+      const paragraphsHtml = about.paragraphs.map(p => `<p>${mdInline(p)}</p>`).join('');
+      text.innerHTML = paragraphsHtml + (meta ? meta.outerHTML : '');
+    }
+  }
+  if (Array.isArray(about.meta) && about.meta.length) {
+    const metaEl = document.querySelector('.about-meta');
+    if (metaEl) {
+      metaEl.innerHTML = about.meta.map(m => {
+        const label = esc(m.label || '');
+        const value = esc(m.value || '');
+        if (/^status$/i.test(m.label || '')) {
+          return `<span><span class="accent">▶</span> ${label}: <span class="status-dot"></span> ${value}</span>`;
+        }
+        return `<span><span class="accent">▶</span> ${label}: ${value}</span>`;
+      }).join('');
+    }
+  }
+
+  const tBody = document.querySelector('.terminal-body code');
+  const aboutLines = Array.isArray(term.about_txt) ? term.about_txt : null;
+  const interestsLines = Array.isArray(term.interests_txt) ? term.interests_txt : null;
+  if (tBody && (aboutLines || interestsLines)) {
+    const aLines = aboutLines || [];
+    const iLines = interestsLines || [];
+    const pad = Math.max(0, ...[...aLines, ...iLines].map(x => (x.label || '').length));
+    const renderKV = (kv) => {
+      const k = kv.label || '';
+      const spaces = ' '.repeat(Math.max(0, pad - k.length));
+      return `<span class="t-key">${esc(k)}</span>${spaces}: ${esc(kv.value || '')}`;
+    };
+    const promptLine = (cmd) =>
+      `<span class="t-box">┌──(</span><span class="t-user">alhussein㉿kali</span><span class="t-box">)-[</span><span class="t-path">~</span><span class="t-box">]</span>\n` +
+      `<span class="t-box">└─</span><span class="t-prompt">$ </span><span class="t-cmd">${esc(cmd)}</span>`;
+    const block1 = promptLine('cat about.txt')     + '\n\n' + aLines.map(renderKV).join('\n');
+    const block2 = promptLine('cat interests.txt') + '\n\n' + iLines.map(renderKV).join('\n');
+    tBody.innerHTML = block1 + '\n\n' + block2;
+  }
+
+  const contactLinks = document.querySelectorAll('.contact-links .contact-item');
+  contactLinks.forEach(a => {
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('mailto:') && contact.email) {
+      a.href = 'mailto:' + contact.email;
+      const lbl = a.querySelector('span:last-child');
+      if (lbl) lbl.textContent = contact.email;
+    } else if (href.includes('github.com') && contact.github) {
+      a.href = contact.github;
+    } else if (href.includes('linkedin.com') && contact.linkedin) {
+      a.href = contact.linkedin;
+    } else if (href.includes('hackthebox.com') && contact.hackthebox) {
+      a.href = contact.hackthebox;
+    } else if (href.includes('tryhackme.com') && contact.tryhackme) {
+      a.href = contact.tryhackme;
+    } else if (href.includes('ctftime.org') && contact.ctftime) {
+      a.href = contact.ctftime;
+    }
+  });
 }
 
 /* ─── RENDER WRITEUPS ─── */
@@ -548,6 +663,7 @@ async function loadCerts() {
 
 /* ─── INIT ─── */
 document.addEventListener('DOMContentLoaded', () => {
+  loadSite();
   loadWriteups();
   loadProjects();
   loadCerts();

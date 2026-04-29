@@ -98,5 +98,15 @@ module.exports = async (req, res) => {
     return res.json({ success: true });
   }
 
+  if (action === 'site_update') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/site_content`, {
+      method: 'POST',
+      headers: { ...headers, Prefer: 'return=representation,resolution=merge-duplicates' },
+      body: JSON.stringify({ id: 1, data, updated_at: new Date().toISOString() }),
+    });
+    const result = await r.json();
+    return res.status(r.ok ? 200 : 400).json(result);
+  }
+
   res.status(400).json({ error: 'Unknown action' });
 };
